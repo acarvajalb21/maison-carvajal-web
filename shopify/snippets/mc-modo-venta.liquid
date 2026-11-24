@@ -1,0 +1,23 @@
+{%- doc -%}
+  MAISON CARVAJAL - decide cómo se vende un perfume. Imprime una sola palabra:
+  - "directa": se compra en línea (carrito y pago con Wompi). Árabes disponibles, o cualquier
+    perfume con la etiqueta venta-directa.
+  - "pedido": se pide por WhatsApp (nicho, diseñador, o etiqueta pedido-whatsapp / confirmar-variante).
+  - "consultar": sin precio o con la etiqueta consultar-precio.
+  Uso: {% capture modo %}{% render 'mc-modo-venta', product: product %}{% endcapture %}
+
+  @param {product} product
+{%- enddoc -%}
+{%- liquid
+  if product.price == 0 or product.tags contains 'consultar-precio'
+    echo 'consultar'
+  elsif product.tags contains 'pedido-whatsapp' or product.tags contains 'confirmar-variante'
+    echo 'pedido'
+  elsif product.available and product.tags contains 'venta-directa'
+    echo 'directa'
+  elsif product.available and product.tags contains 'coleccion-arabes'
+    echo 'directa'
+  else
+    echo 'pedido'
+  endif
+-%}

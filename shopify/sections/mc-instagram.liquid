@@ -1,0 +1,150 @@
+{%- comment -%}
+  MAISON CARVAJAL - "Desde nuestro Instagram".
+  Muestra publicaciones reales de @maisoncarvajal con el reproductor oficial de Instagram.
+  Cada bloque es una publicación (se pega el enlace). Los reproductores solo se cargan cuando
+  la sección se acerca a la pantalla, para no frenar la portada. Sin JavaScript queda el enlace.
+{%- endcomment -%}
+
+<div class="section-background"></div>
+<div
+  class="section section--page-width spacing-style mc-ig"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <div class="mc-section-head">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="mc-eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    <h2>{{ section.settings.heading }}</h2>
+    <span class="mc-rule" aria-hidden="true"></span>
+    {%- if section.settings.intro != blank -%}
+      <p>{{ section.settings.intro }}</p>
+    {%- endif -%}
+  </div>
+
+  <mc-instagram class="mc-ig__rail">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign post_url = block.settings.url | strip | split: '?' | first
+        assign post_kind = ''
+        if post_url contains 'instagram.com'
+          if post_url contains '/reel/'
+            assign post_kind = 'reel'
+          elsif post_url contains '/p/'
+            assign post_kind = 'p'
+          endif
+        endif
+        assign post_code = post_url | split: '/reel/' | last | split: '/p/' | last | split: '/' | first
+        assign post_title = block.settings.title | default: 'Publicación de Maison Carvajal'
+      -%}
+      {%- if post_kind != blank and post_code != blank -%}
+        <article class="mc-ig__item" {{ block.shopify_attributes }}>
+          <div class="mc-ig__frame">
+            <iframe
+              data-src="https://www.instagram.com/{{ post_kind }}/{{ post_code }}/embed/"
+              title="{{ post_title | escape }} (Instagram)"
+              loading="lazy"
+              allowfullscreen
+              scrolling="no"
+            ></iframe>
+            <a class="mc-ig__fallback" href="https://www.instagram.com/{{ post_kind }}/{{ post_code }}/" target="_blank" rel="noopener">
+              <span class="mc-ig__fallback-label">Instagram</span>
+              <span class="mc-card-name">{{ post_title }}</span>
+              <span class="mc-ig__fallback-cta">Ver publicación <span aria-hidden="true">&rarr;</span></span>
+              <span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+            </a>
+          </div>
+          {%- if block.settings.title != blank -%}
+            <p class="mc-ig__caption">{{ block.settings.title }}</p>
+          {%- endif -%}
+        </article>
+      {%- endif -%}
+    {%- endfor -%}
+  </mc-instagram>
+
+  <div class="mc-ig__actions">
+    {%- if section.settings.profile_url != blank -%}
+      <a class="mc-btn mc-btn--dark" href="{{ section.settings.profile_url }}" target="_blank" rel="noopener">
+        {{- section.settings.profile_label -}}
+        <span class="visually-hidden"> (Instagram, se abre en una pestaña nueva)</span>
+      </a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .mc-ig__rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(82%, 340px); gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.75rem; scrollbar-width: thin; }
+  @media (min-width: 990px) { .mc-ig__rail { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 340px)); justify-content: center; gap: 1.5rem; overflow: visible; } }
+  .mc-ig__item { scroll-snap-align: start; display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+  /* Alto reservado desde el inicio: el reproductor de Instagram mide 1,25 veces su ancho (video)
+     más unos 220 px fijos de encabezado y pie. Así no hay saltos al cargar ni espacio en blanco. */
+  .mc-ig__frame { position: relative; height: 0; padding-bottom: calc(125% + 220px); background: #f4f0e8; border: 1px solid #e5ded0; border-radius: 10px; overflow: hidden; }
+  .mc-ig__frame iframe { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity 0.4s ease; }
+  .mc-ig__frame iframe.is-loaded { opacity: 1; }
+  .mc-ig__fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; padding: 1.5rem; text-align: center; color: #151515; text-decoration: none; }
+  .mc-ig__fallback:focus-visible { outline: 2px solid #c6a66b; outline-offset: -4px; }
+  .mc-ig__fallback-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #66615a; }
+  .mc-ig__fallback-cta { font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid #c6a66b; padding-bottom: 0.2rem; }
+  .mc-ig__caption { margin: 0; font-size: 0.9375rem; line-height: 1.5; color: #66615a; text-align: center; }
+  .mc-ig__actions { display: flex; justify-content: center; margin-top: 2rem; }
+  @media (prefers-reduced-motion: reduce) { .mc-ig__frame iframe { transition: none; } }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('mc-instagram')) {
+    customElements.define(
+      'mc-instagram',
+      class extends HTMLElement {
+        connectedCallback() {
+          const frames = Array.from(this.querySelectorAll('iframe[data-src]'));
+          if (!frames.length) return;
+          const load = (frame) => {
+            if (frame.src) return;
+            frame.addEventListener('load', () => frame.classList.add('is-loaded'), { once: true });
+            frame.src = frame.dataset.src;
+          };
+          if (!('IntersectionObserver' in window)) return frames.forEach(load);
+          this.io = new IntersectionObserver(
+            (entries) => entries.forEach((en) => {
+              if (en.isIntersecting) { load(en.target); this.io.unobserve(en.target); }
+            }),
+            { rootMargin: '400px 200px' }
+          );
+          frames.forEach((f) => this.io.observe(f));
+        }
+        disconnectedCallback() {
+          if (this.io) this.io.disconnect();
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MC · Instagram",
+  "tag": "section",
+  "class": "mc-ig-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Antetítulo", "default": "@maisoncarvajal" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Míralo en Instagram" },
+    { "type": "textarea", "id": "intro", "label": "Introducción" },
+    { "type": "text", "id": "profile_label", "label": "Texto del botón", "default": "Seguir en Instagram" },
+    { "type": "url", "id": "profile_url", "label": "Enlace del perfil" },
+    { "type": "header", "content": "Espaciado" },
+    { "type": "range", "id": "padding-block-start", "label": "Arriba", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding-block-end", "label": "Abajo", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "publicacion",
+      "name": "Publicación",
+      "settings": [
+        { "type": "text", "id": "url", "label": "Enlace de la publicación o reel", "info": "En Instagram: tres puntos de la publicación, Copiar enlace. Debe ser pública." },
+        { "type": "text", "id": "title", "label": "Descripción corta", "info": "Se muestra debajo y la usan los lectores de pantalla." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [{ "name": "MC · Instagram" }]
+}
+{% endschema %}

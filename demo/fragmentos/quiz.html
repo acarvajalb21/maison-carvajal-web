@@ -1,0 +1,61 @@
+  <mc-quiz class="mc-quiz__box" data-wa="">
+    <div class="mc-quiz__intro">
+      <p class="mc-eyebrow">Asesoría rápida</p>
+      <h2 class="mc-quiz__title">Encuentra tu perfume en 3 pasos</h2>
+      <span class="mc-rule" aria-hidden="true"></span>
+      
+        <p class="mc-quiz__lead">Responde tres preguntas y te mostramos opciones de nuestro catálogo. Después las afinamos contigo por WhatsApp.</p>
+      
+      <div class="mc-quiz__progress" aria-hidden="true"><span data-progress></span></div>
+      <p class="mc-quiz__step-label" data-step-label>Paso 1 de 3</p>
+    </div>
+
+    <div class="mc-quiz__stage">
+      <fieldset class="mc-q" data-step="1">
+        <legend class="mc-q__legend">¿Para quién es el perfume?</legend>
+        <div class="mc-choices mc-choices--2">
+          <label class="mc-choice"><input type="radio" name="mc-para-q1" value="para mí"><span class="mc-choice__title">Para mí</span><span class="mc-choice__hint">Quiero encontrar mi próximo perfume</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-para-q1" value="para regalar"><span class="mc-choice__title">Para regalar</span><span class="mc-choice__hint">Busco un detalle que acierte</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mc-q" data-step="2" hidden>
+        <legend class="mc-q__legend">¿Qué aromas te atraen más?</legend>
+        <div class="mc-choices">
+          <label class="mc-choice"><input type="radio" name="mc-perfil-q1" value="dulce" data-label="dulces y cálidos"><span class="mc-choice__title">Dulce y cálido</span><span class="mc-choice__hint">Vainilla, café, pistacho, especias</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-perfil-q1" value="fresco" data-label="frescos y limpios"><span class="mc-choice__title">Fresco y limpio</span><span class="mc-choice__hint">Cítricos, notas marinas, frutas</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-perfil-q1" value="amaderado" data-label="amaderados e intensos"><span class="mc-choice__title">Amaderado e intenso</span><span class="mc-choice__hint">Maderas, cuero, oud, ámbar</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-perfil-q1" value="floral" data-label="florales"><span class="mc-choice__title">Floral</span><span class="mc-choice__hint">Rosa, jazmín, flores blancas</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mc-q" data-step="3" hidden>
+        <legend class="mc-q__legend">¿Cuál es tu presupuesto?</legend>
+        <div class="mc-choices">
+          <label class="mc-choice"><input type="radio" name="mc-pres-q1" value="0-250000" data-label="hasta $250.000"><span class="mc-choice__title">Hasta $250.000</span><span class="mc-choice__hint">Árabes con mucha presencia</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-pres-q1" value="250000-700000" data-label="entre $250.000 y $700.000"><span class="mc-choice__title">$250.000 – $700.000</span><span class="mc-choice__hint">Diseñador y árabes premium</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-pres-q1" value="700000-999999999" data-label="más de $700.000"><span class="mc-choice__title">Más de $700.000</span><span class="mc-choice__hint">Nicho y grandes casas</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-pres-q1" value="0-999999999" data-label="sin un límite definido"><span class="mc-choice__title">Sin límite</span><span class="mc-choice__hint">Muéstrame lo mejor</span></label>
+        </div>
+      </fieldset>
+
+      <div class="mc-quiz__result" data-result hidden tabindex="-1">
+        <p class="mc-eyebrow">Tus sugerencias</p>
+        <h3 class="mc-quiz__result-title" data-result-title></h3>
+        <p class="mc-quiz__note" data-result-note></p>
+        <div class="mc-rail mc-rail--quiz" data-results></div>
+        <div class="mc-quiz__actions">
+          <a class="mc-btn mc-btn--dark" data-wa-link href="https://wa.me/">
+            Confirmar con un asesor por WhatsApp
+          </a>
+          <button type="button" class="mc-quiz__link" data-restart>Volver a empezar</button>
+        </div>
+      </div>
+
+      <div class="mc-quiz__nav">
+        <button type="button" class="mc-quiz__link" data-back hidden>&larr; Atrás</button>
+        <button type="button" class="mc-btn mc-btn--dark" data-next hidden>Continuar &rarr;</button>
+      </div>
+    </div>
+
+  </mc-quiz>

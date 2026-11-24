@@ -1,0 +1,39 @@
+{%- doc -%}
+  MAISON CARVAJAL - información adicional de la ficha.
+  Concentración y tamaño solo aparecen cuando están llenos en los metacampos (maison.concentracion, maison.tamano_ml).
+  El botón de dudas y las notas cambian según el modo de venta (ver mc-modo-venta).
+
+  @param {product} product
+{%- enddoc -%}
+{%- liquid
+  assign conc = product.metafields.maison.concentracion.value
+  assign size = product.metafields.maison.tamano_ml.value
+-%}
+{%- capture modo -%}{% render 'mc-modo-venta', product: product %}{%- endcapture -%}
+{%- assign modo = modo | strip -%}
+<div class="mc-extra">
+  {%- if conc != blank or size != blank -%}
+    <dl class="mc-specs">
+      {%- if conc != blank -%}
+        <div><dt>Concentración</dt><dd>{{ conc }}</dd></div>
+      {%- endif -%}
+      {%- if size != blank -%}
+        <div><dt>Tamaño</dt><dd>{{ size }} ml</dd></div>
+      {%- endif -%}
+    </dl>
+  {%- endif -%}
+
+  {%- if modo == 'directa' -%}
+    {% render 'mc-whatsapp', product: product, class: 'mc-btn--outline', label: '¿Dudas? Consultar por WhatsApp' %}
+  {%- endif -%}
+
+  <ul class="mc-notes">
+    {%- if modo == 'directa' -%}
+      <li>Después del pago te confirmamos el despacho por WhatsApp.</li>
+      <li>Compra protegida: si tu perfume llega con algún problema, te lo cambiamos sin costo.</li>
+    {%- else -%}
+      <li>Pagas solo después de confirmar disponibilidad y precio.</li>
+    {%- endif -%}
+    <li>Entrega de 2 a 5 días hábiles.</li>
+  </ul>
+</div>

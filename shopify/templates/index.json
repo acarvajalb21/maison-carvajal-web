@@ -1,0 +1,497 @@
+{
+  "sections": {
+    "mc_hero": {
+      "type": "mc-hero",
+      "settings": {
+        "eyebrow": "Perfumería",
+        "heading": "Maison Carvajal",
+        "tagline": "Fragancias que cuentan tu historia",
+        "subheading": "Perfumes originales nicho, de diseñador y árabes, con asesoría personalizada.",
+        "cta_label": "Explorar el catálogo",
+        "cta_url": "",
+        "cta2_label": "Recibir asesoría",
+        "spot_label": "En tendencia",
+        "products": [
+          "lattafa-khamrah",
+          "creed-aventus",
+          "lattafa-yara",
+          "xerjoff-erba-pura",
+          "lattafa-asad",
+          "armaf-odyssey-mandarin-sky",
+          "afnan-9-pm",
+          "armaf-club-de-nuit-intense-man"
+        ]
+      }
+    },
+    "mc_colecciones": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"mc-section-head\">\n  <p class=\"mc-eyebrow\">Colecciones</p>\n  <h2>Explora el catálogo</h2>\n  <span class=\"mc-rule\" aria-hidden=\"true\"></span>\n</div>\n<div class=\"mc-collections\">\n  {%- assign tiles = 'nicho:creed-aventus,disenador:dior-sauvage-elixir,arabes:lattafa-khamrah' | split: ',' -%}\n  {%- for t in tiles -%}\n    {%- assign parts = t | split: ':' -%}\n    {%- assign c = collections[parts[0]] -%}\n    {%- assign img = all_products[parts[1]].featured_image -%}\n    <a class=\"mc-collection-tile{% if img %} mc-collection-tile--photo{% endif %}\" href=\"{{ c.url }}\">\n      {%- if img -%}\n        {{ img | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360, 540, 720, 900', sizes: '(min-width: 750px) 33vw, 100vw', alt: '' }}\n      {%- endif -%}\n      <span class=\"mc-collection-tile__label\">\n        <span class=\"mc-collection-tile__name\">{{ c.title }}</span>\n        <span class=\"mc-collection-tile__cta\" aria-hidden=\"true\">Ver</span>\n      </span>\n    </a>\n  {%- endfor -%}\n</div>",
+        "background_color": "",
+        "section_width": "page-width",
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "mc_casas": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"mc-section-head\">\n  <p class=\"mc-eyebrow\">Casas</p>\n  <h2>Busca por marca</h2>\n  <span class=\"mc-rule\" aria-hidden=\"true\"></span>\n</div>\n<div class=\"mc-houses\">\n  {%- assign hs = 'nicho,disenador,arabes' | split: ',' -%}\n  {%- for h in hs -%}\n    {%- assign c = collections[h] -%}\n    {%- comment -%} Solo marcas con al menos un perfume publicado, disponible y con precio (las colecciones tienen menos de 50 productos). {%- endcomment -%}\n    {%- assign vlist = '' -%}\n    {%- for p in c.products -%}\n      {%- if p.available and p.price > 0 -%}\n        {%- assign key = '|' | append: p.vendor | append: '|' -%}\n        {%- unless vlist contains key -%}\n          {%- assign vlist = vlist | append: key -%}\n        {%- endunless -%}\n      {%- endif -%}\n    {%- endfor -%}\n    {%- assign vendors = vlist | split: '|' | sort_natural -%}\n    <div>\n      <h3>{{ c.title }}</h3>\n      <ul>\n        {%- for v in vendors -%}\n          {%- if v != blank -%}\n            <li><a href=\"{{ v | url_for_vendor }}\">{{ v }}</a></li>\n          {%- endif -%}\n        {%- endfor -%}\n      </ul>\n    </div>\n  {%- endfor -%}\n</div>",
+        "background_color": "#F4F0E8",
+        "section_width": "page-width",
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "mc_asesoria": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"mc-advice\">\n  <div>\n    <p class=\"mc-eyebrow\">Atención personalizada</p>\n    <h2>¿No sabes cuál elegir?</h2>\n    <p>Cuéntanos si el perfume es para ti o para regalo, qué aromas te gustan y para qué ocasión. Te recomendamos opciones según tu gusto y presupuesto.</p>\n    {% render 'mc-whatsapp', class: 'mc-btn--dark', label: 'Escríbenos por WhatsApp' %}\n  </div>\n  <ol class=\"mc-steps\">\n    <li><div><strong>Escríbenos</strong><span>Por WhatsApp o Instagram @maisoncarvajal.</span></div></li>\n    <li><div><strong>Cuéntanos qué buscas</strong><span>Aromas que te gustan, los que evitas, ocasión y presupuesto.</span></div></li>\n    <li><div><strong>Recibe tu perfume</strong><span>Confirmamos precio y disponibilidad. Entrega de 2 a 5 días hábiles.</span></div></li>\n  </ol>\n</div>",
+        "background_color": "",
+        "section_width": "page-width",
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "mc_tendencias": {
+      "type": "mc-tendencias",
+      "blocks": {
+        "t_gourmand": {
+          "type": "tendencia",
+          "settings": {
+            "title": "Gourmand y pistacho",
+            "stat": "",
+            "text": "Los perfumes que huelen a postre son la tendencia más fuerte de 2026: pistacho, café, caramelo y especias dulces.",
+            "products": [
+              "paris-corner-khair-pistachio",
+              "lattafa-khamrah",
+              "lattafa-khamrah-qahwa",
+              "lattafa-yara"
+            ],
+            "collection": ""
+          }
+        },
+        "t_vainilla": {
+          "type": "tendencia",
+          "settings": {
+            "title": "Vainilla y ámbar",
+            "stat": "",
+            "text": "La vainilla sigue creciendo, ahora más cálida y especiada, con licores, canela y ámbar. Ideal para la noche.",
+            "products": [
+              "parfums-de-marly-althair",
+              "french-avenue-liquid-burn",
+              "afnan-9-pm",
+              "valentino-uomo-born-in-roma-intense"
+            ],
+            "collection": ""
+          }
+        },
+        "t_arabes": {
+          "type": "tendencia",
+          "settings": {
+            "title": "Árabes que todos buscan",
+            "stat": "",
+            "text": "La perfumería árabe está en todas las redes por su intensidad y su gran relación calidad-precio.",
+            "products": [
+              "lattafa-asad",
+              "armaf-odyssey-mandarin-sky",
+              "armaf-club-de-nuit-intense-man"
+            ],
+            "collection": "arabes"
+          }
+        },
+        "t_temporada": {
+          "type": "tendencia",
+          "settings": {
+            "title": "Nicho del momento",
+            "stat": "",
+            "text": "Las casas nicho más comentadas: clásicos que no pasan de moda y fragancias que se volvieron virales.",
+            "products": [
+              "creed-aventus",
+              "xerjoff-erba-pura",
+              "parfums-de-marly-haltane"
+            ],
+            "collection": "nicho"
+          }
+        }
+      },
+      "block_order": [
+        "t_gourmand",
+        "t_vainilla",
+        "t_arabes",
+        "t_temporada"
+      ],
+      "settings": {
+        "eyebrow": "Tendencias 2026",
+        "heading": "Lo que más está llamando la atención",
+        "intro": "Seleccionamos de nuestro catálogo los perfumes que encajan con lo que más se está buscando este año. Toca cada tendencia para descubrirlos.",
+        "source_note": "",
+        "padding-block-start": 64,
+        "padding-block-end": 56
+      }
+    },
+    "mc_quiz": {
+      "type": "mc-quiz",
+      "blocks": {
+        "p_paris_corner_khair_pistachio": {
+          "type": "perfume",
+          "settings": {
+            "product": "paris-corner-khair-pistachio",
+            "profile": "dulce"
+          }
+        },
+        "p_lattafa_khamrah": {
+          "type": "perfume",
+          "settings": {
+            "product": "lattafa-khamrah",
+            "profile": "dulce"
+          }
+        },
+        "p_lattafa_khamrah_qahwa": {
+          "type": "perfume",
+          "settings": {
+            "product": "lattafa-khamrah-qahwa",
+            "profile": "dulce"
+          }
+        },
+        "p_lattafa_yara": {
+          "type": "perfume",
+          "settings": {
+            "product": "lattafa-yara",
+            "profile": "dulce"
+          }
+        },
+        "p_afnan_9_pm": {
+          "type": "perfume",
+          "settings": {
+            "product": "afnan-9-pm",
+            "profile": "dulce"
+          }
+        },
+        "p_french_avenue_liquid_burn": {
+          "type": "perfume",
+          "settings": {
+            "product": "french-avenue-liquid-burn",
+            "profile": "dulce"
+          }
+        },
+        "p_carolina_herrera_good_girl_edp": {
+          "type": "perfume",
+          "settings": {
+            "product": "carolina-herrera-good-girl-edp",
+            "profile": "dulce"
+          }
+        },
+        "p_giorgio_armani_stronger_with_you_intense": {
+          "type": "perfume",
+          "settings": {
+            "product": "giorgio-armani-stronger-with-you-intensely",
+            "profile": "dulce"
+          }
+        },
+        "p_jean_paul_gaultier_le_male_elixir": {
+          "type": "perfume",
+          "settings": {
+            "product": "jean-paul-gaultier-le-male-elixir",
+            "profile": "dulce"
+          }
+        },
+        "p_valentino_uomo_born_in_roma_intense": {
+          "type": "perfume",
+          "settings": {
+            "product": "valentino-uomo-born-in-roma-intense",
+            "profile": "dulce"
+          }
+        },
+        "p_parfums_de_marly_althair": {
+          "type": "perfume",
+          "settings": {
+            "product": "parfums-de-marly-althair",
+            "profile": "dulce"
+          }
+        },
+        "p_armaf_club_de_nuit_intense_man": {
+          "type": "perfume",
+          "settings": {
+            "product": "armaf-club-de-nuit-intense-man",
+            "profile": "fresco"
+          }
+        },
+        "p_armaf_odyssey_mandarin_sky": {
+          "type": "perfume",
+          "settings": {
+            "product": "armaf-odyssey-mandarin-sky",
+            "profile": "fresco"
+          }
+        },
+        "p_rasasi_hawas": {
+          "type": "perfume",
+          "settings": {
+            "product": "rasasi-hawas",
+            "profile": "fresco"
+          }
+        },
+        "p_giorgio_armani_acqua_di_gio": {
+          "type": "perfume",
+          "settings": {
+            "product": "giorgio-armani-acqua-di-gio",
+            "profile": "fresco"
+          }
+        },
+        "p_giorgio_armani_acqua_di_gio_profondo": {
+          "type": "perfume",
+          "settings": {
+            "product": "giorgio-armani-acqua-di-gio-profondo",
+            "profile": "fresco"
+          }
+        },
+        "p_creed_aventus": {
+          "type": "perfume",
+          "settings": {
+            "product": "creed-aventus",
+            "profile": "fresco"
+          }
+        },
+        "p_lattafa_asad": {
+          "type": "perfume",
+          "settings": {
+            "product": "lattafa-asad",
+            "profile": "amaderado"
+          }
+        },
+        "p_afnan_supremacy_collectors": {
+          "type": "perfume",
+          "settings": {
+            "product": "afnan-supremacy-collectors",
+            "profile": "amaderado"
+          }
+        },
+        "p_parfums_de_marly_haltane": {
+          "type": "perfume",
+          "settings": {
+            "product": "parfums-de-marly-haltane",
+            "profile": "amaderado"
+          }
+        },
+        "p_tom_ford_ombre_leather": {
+          "type": "perfume",
+          "settings": {
+            "product": "tom-ford-ombre-leather",
+            "profile": "amaderado"
+          }
+        },
+        "p_dior_sauvage_elixir": {
+          "type": "perfume",
+          "settings": {
+            "product": "dior-sauvage-elixir",
+            "profile": "amaderado"
+          }
+        },
+        "p_versace_bright_crystal": {
+          "type": "perfume",
+          "settings": {
+            "product": "versace-bright-crystal",
+            "profile": "floral"
+          }
+        },
+        "p_yves_saint_laurent_libre_intense": {
+          "type": "perfume",
+          "settings": {
+            "product": "yves-saint-laurent-libre-intense",
+            "profile": "floral"
+          }
+        },
+        "p_dior_j_adore_edp": {
+          "type": "perfume",
+          "settings": {
+            "product": "dior-j-adore-edp",
+            "profile": "floral"
+          }
+        },
+        "p_dior_miss_dior_edp": {
+          "type": "perfume",
+          "settings": {
+            "product": "dior-miss-dior-edp",
+            "profile": "floral"
+          }
+        },
+        "p_chanel_coco_mademoiselle_edp": {
+          "type": "perfume",
+          "settings": {
+            "product": "chanel-coco-mademoiselle-edp",
+            "profile": "floral"
+          }
+        },
+        "p_parfums_de_marly_delina": {
+          "type": "perfume",
+          "settings": {
+            "product": "parfums-de-marly-delina",
+            "profile": "floral"
+          }
+        },
+        "p_parfums_de_marly_valaya": {
+          "type": "perfume",
+          "settings": {
+            "product": "parfums-de-marly-valaya",
+            "profile": "floral"
+          }
+        }
+      },
+      "block_order": [
+        "p_paris_corner_khair_pistachio",
+        "p_lattafa_khamrah",
+        "p_lattafa_khamrah_qahwa",
+        "p_lattafa_yara",
+        "p_afnan_9_pm",
+        "p_french_avenue_liquid_burn",
+        "p_carolina_herrera_good_girl_edp",
+        "p_giorgio_armani_stronger_with_you_intense",
+        "p_jean_paul_gaultier_le_male_elixir",
+        "p_valentino_uomo_born_in_roma_intense",
+        "p_parfums_de_marly_althair",
+        "p_armaf_club_de_nuit_intense_man",
+        "p_armaf_odyssey_mandarin_sky",
+        "p_rasasi_hawas",
+        "p_giorgio_armani_acqua_di_gio",
+        "p_giorgio_armani_acqua_di_gio_profondo",
+        "p_creed_aventus",
+        "p_lattafa_asad",
+        "p_afnan_supremacy_collectors",
+        "p_parfums_de_marly_haltane",
+        "p_tom_ford_ombre_leather",
+        "p_dior_sauvage_elixir",
+        "p_versace_bright_crystal",
+        "p_yves_saint_laurent_libre_intense",
+        "p_dior_j_adore_edp",
+        "p_dior_miss_dior_edp",
+        "p_chanel_coco_mademoiselle_edp",
+        "p_parfums_de_marly_delina",
+        "p_parfums_de_marly_valaya"
+      ],
+      "settings": {
+        "eyebrow": "Asesoría rápida",
+        "heading": "Encuentra tu perfume en 3 pasos",
+        "text": "Responde tres preguntas y te mostramos opciones de nuestro catálogo. Después las afinamos contigo por WhatsApp.",
+        "footnote": "El perfil de cada perfume es orientativo, según las notas que describe cada casa. La piel, el clima y la ocasión cambian cómo se siente un perfume: por eso te asesoramos antes de comprar.",
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "mc_instagram": {
+      "type": "mc-instagram",
+      "blocks": {
+        "ig_1": {
+          "type": "publicacion",
+          "settings": {
+            "url": "https://www.instagram.com/reel/Df0iiD8SvDC/",
+            "title": ""
+          }
+        },
+        "ig_2": {
+          "type": "publicacion",
+          "settings": {
+            "url": "https://www.instagram.com/reel/De24MXcyBxN/",
+            "title": ""
+          }
+        },
+        "ig_3": {
+          "type": "publicacion",
+          "settings": {
+            "url": "https://www.instagram.com/reel/DeiMXTroYBY/",
+            "title": ""
+          }
+        }
+      },
+      "block_order": [
+        "ig_1",
+        "ig_2",
+        "ig_3"
+      ],
+      "settings": {
+        "eyebrow": "@maisoncarvajal",
+        "heading": "Míralo en Instagram",
+        "intro": "Los perfumes en video, contados por Alejandro. Mira los reels y escríbenos si alguno te llama la atención.",
+        "profile_label": "Seguir en Instagram",
+        "profile_url": "https://www.instagram.com/maisoncarvajal/",
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "mc_2x300_portada": {
+      "type": "mc-2x300-portada",
+      "blocks": {
+        "par_1": {
+          "type": "pareja",
+          "settings": {
+            "product_1": "lattafa-asad",
+            "product_2": "armaf-odyssey-mandarin-sky"
+          }
+        },
+        "par_2": {
+          "type": "pareja",
+          "settings": {
+            "product_1": "lattafa-yara-candy",
+            "product_2": "lattafa-khamrah"
+          }
+        },
+        "par_3": {
+          "type": "pareja",
+          "settings": {
+            "product_1": "lattafa-bade-e-al-oud-oud-for-glory",
+            "product_2": "lattafa-khamrah-qahwa"
+          }
+        },
+        "par_4": {
+          "type": "pareja",
+          "settings": {
+            "product_1": "lattafa-yara",
+            "product_2": "rasasi-hawas"
+          }
+        },
+        "par_5": {
+          "type": "pareja",
+          "settings": {
+            "product_1": "lattafa-qaed-al-fursan",
+            "product_2": "lattafa-angham"
+          }
+        },
+        "par_6": {
+          "type": "pareja",
+          "settings": {
+            "product_1": "lattafa-qaed-al-fursan-untamed",
+            "product_2": "armaf-club-de-nuit-intense-man"
+          }
+        }
+      },
+      "block_order": [
+        "par_1",
+        "par_2",
+        "par_3",
+        "par_4",
+        "par_5",
+        "par_6"
+      ],
+      "settings": {
+        "heading": "2x300",
+        "lead": "Elige 2 perfumes desde $300.000",
+        "question": "¿Cuántos vas a llevar?",
+        "note": "El descuento se aplica solo en el carrito.",
+        "link_label": "Prefiero elegirlos yo",
+        "link": "/pages/2x300",
+        "start": "4",
+        "padding-block-start": 64,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": [
+    "mc_hero",
+    "mc_2x300_portada",
+    "mc_tendencias",
+    "mc_colecciones",
+    "mc_quiz",
+    "mc_instagram",
+    "mc_casas",
+    "mc_asesoria"
+  ]
+}

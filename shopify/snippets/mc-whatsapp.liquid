@@ -1,0 +1,31 @@
+{%- doc -%}
+  MAISON CARVAJAL - botón de WhatsApp.
+  Abre WhatsApp con casa, nombre, variante (si existe) y URL de la ficha.
+
+  @param {product} [product] - Producto a consultar. Sin producto, pide asesoría general.
+  @param {string} [class] - Clase de estilo (mc-btn--dark, mc-btn--outline, mc-btn--light, mc-btn--ghost)
+  @param {string} [label] - Texto del botón
+{%- enddoc -%}
+{%- liquid
+  assign wa_number = '57XXXXXXXXXX'
+  if product != blank
+    assign msg = 'Hola, me interesa ' | append: product.vendor | append: ' ' | append: product.title
+    unless product.has_only_default_variant
+      assign msg = msg | append: ' (' | append: product.selected_or_first_available_variant.title | append: ')'
+    endunless
+    assign msg = msg | append: '. ¿Me confirmas precio y disponibilidad? ' | append: shop.url | append: product.url
+  else
+    assign msg = 'Hola, quiero asesoría para elegir un perfume.'
+  endif
+  assign btn_class = class | default: 'mc-btn--dark'
+  assign btn_label = label | default: 'Consultar por WhatsApp'
+-%}
+<a
+  class="mc-btn {{ btn_class }}"
+  href="https://wa.me/{{ wa_number }}?text={{ msg | url_encode }}"
+  target="_blank"
+  rel="noopener"
+>
+  {{- btn_label -}}
+  <span class="visually-hidden"> (WhatsApp, se abre en una pestaña nueva)</span>
+</a>

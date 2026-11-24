@@ -1,0 +1,666 @@
+{%- comment -%}
+  MAISON CARVAJAL · 2x300.
+  El cliente elige dos perfumes compatibles y se agregan al carrito por separado. El descuento se aplica solo.
+  Esta página solo ofrece las parejas de snippets/mc-2x300-pares.liquid.
+  Perfumes: productos de la colección (Árabes por defecto) con etiqueta duo-esencial, duo-plus o duo-premium,
+  o la categoría de respaldo del snippet. No entran consultar-precio, pedido-whatsapp ni confirmar-variante.
+{%- endcomment -%}
+{%- liquid
+  capture datos
+    render 'mc-2x300-pares'
+  endcapture
+  assign datos = datos | strip
+  assign col = section.settings.collection
+  if col == blank
+    assign col = collections['arabes']
+  endif
+  assign cats = 'esencial,plus,premium' | split: ','
+  assign titulo = section.settings.heading | default: page.title | default: '2x300'
+-%}
+
+<div class="section-background"></div>
+<div
+  class="section section--page-width spacing-style mc-duo-section"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <mc-duo class="mc-duo" data-step="0" data-cart-url="{{ routes.cart_url }}" data-cart-add-url="{{ routes.cart_add_url }}">
+    <header class="mc-duo-head">
+      {%- if section.settings.show_invitation and section.settings.invitation != blank -%}
+        <p class="mc-duo-invite">{{ section.settings.invitation }}</p>
+      {%- endif -%}
+      <h1 class="mc-duo-title">{{ titulo }}</h1>
+      <span class="mc-rule" aria-hidden="true"></span>
+      <p class="mc-duo-sub" data-duo-sub>Elige 2 perfumes desde $300.000</p>
+      <ol class="mc-duo-steps">
+        <li data-duo-stepitem="1"><span aria-hidden="true">01</span> Elige tu primer perfume</li>
+        <li data-duo-stepitem="2"><span aria-hidden="true">02</span> Elige su compañero</li>
+        <li data-duo-stepitem="3"><span aria-hidden="true">03</span> Añádelos al carrito</li>
+      </ol>
+    </header>
+
+    <div class="mc-duo-layout">
+      <div class="mc-duo-main">
+        <div class="mc-duo-toolbar">
+          <div class="mc-duo-filters" role="group" aria-label="Filtrar por categoría">
+            <button type="button" class="mc-duo-chip" data-duo-filter="todos" aria-pressed="true">Todos</button>
+            <button type="button" class="mc-duo-chip" data-duo-filter="esencial" aria-pressed="false">Esencial</button>
+            <button type="button" class="mc-duo-chip" data-duo-filter="plus" aria-pressed="false">Plus</button>
+            <button type="button" class="mc-duo-chip" data-duo-filter="premium" aria-pressed="false">Premium</button>
+          </div>
+          <p class="mc-duo-context" data-duo-context>Elige tu primer perfume.</p>
+        </div>
+
+        <h2 class="visually-hidden">Perfumes del 2x300</h2>
+        <ul class="mc-duo-grid" role="list">
+          {%- paginate col.products by 250 -%}
+            {%- for cat in cats -%}
+              {%- for p in col.products -%}
+                {%- liquid
+                  assign pcat = ''
+                  if p.tags contains 'duo-esencial'
+                    assign pcat = 'esencial'
+                  elsif p.tags contains 'duo-plus'
+                    assign pcat = 'plus'
+                  elsif p.tags contains 'duo-premium'
+                    assign pcat = 'premium'
+                  else
+                    assign needle = '"' | append: p.id | append: '":"'
+                    if datos contains needle
+                      for c in cats
+                        assign needle_cat = needle | append: c | append: '"'
+                        if datos contains needle_cat
+                          assign pcat = c
+                        endif
+                      endfor
+                    endif
+                  endif
+                  if pcat != cat or p.price == 0
+                    continue
+                  endif
+                  if p.tags contains 'consultar-precio' or p.tags contains 'pedido-whatsapp' or p.tags contains 'confirmar-variante'
+                    continue
+                  endif
+                  assign full_name = p.vendor | append: ' ' | append: p.title
+                  case pcat
+                    when 'esencial'
+                      assign etiqueta = 'Esencial'
+                    when 'plus'
+                      assign etiqueta = 'Plus'
+                    else
+                      assign etiqueta = 'Premium'
+                  endcase
+                -%}
+                <li
+                  class="mc-duo-card"
+                  data-duo-card
+                  data-id="{{ p.id }}"
+                  data-cat="{{ pcat }}"
+                  data-name="{{ full_name | escape }}"
+                  data-role="idle"
+                >
+                  <a class="mc-duo-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+                    {%- if p.featured_image -%}
+                      {{
+                        p.featured_image
+                        | image_url: width: 480
+                        | image_tag: loading: 'lazy', widths: '240, 360, 480', sizes: '(min-width: 1200px) 220px, (min-width: 750px) 30vw, 46vw', alt: ''
+                      }}
+                    {%- endif -%}
+                    <span class="mc-duo-card__flag" data-duo-flag></span>
+                  </a>
+                  <div class="mc-duo-card__body">
+                    <p class="mc-card-vendor">{{ p.vendor }}</p>
+                    <h3 class="mc-card-name mc-duo-card__name">
+                      <a href="{{ p.url }}">{{ p.title }}</a>
+                    </h3>
+                    <span class="mc-duo-tag">{{ etiqueta }}</span>
+                    {%- if p.has_only_default_variant -%}
+                      <input
+                        type="hidden"
+                        data-variant
+                        value="{{ p.selected_or_first_available_variant.id }}"
+                        data-title=""
+                        data-price="{{ p.selected_or_first_available_variant.price }}"
+                        data-available="{{ p.selected_or_first_available_variant.available }}"
+                      >
+                    {%- else -%}
+                      <label class="mc-duo-card__variant">
+                        <span>Presentación</span>
+                        <select data-variant>
+                          {%- for v in p.variants -%}
+                            <option
+                              value="{{ v.id }}"
+                              data-title="{{ v.title | escape }}"
+                              data-price="{{ v.price }}"
+                              data-available="{{ v.available }}"
+                              {% if v == p.selected_or_first_available_variant %}
+                                selected
+                              {% endif %}
+                            >
+                              {{ v.title }}{% unless v.available %} · agotada{% endunless %}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      </label>
+                    {%- endif -%}
+                    <p class="mc-duo-card__state" data-duo-state></p>
+                    <button
+                      type="button"
+                      class="mc-duo-card__pick"
+                      data-duo-pick
+                      aria-pressed="false"
+                      aria-label="Elegir {{ full_name | escape }}"
+                    >
+                      Elegir
+                    </button>
+                  </div>
+                </li>
+              {%- endfor -%}
+            {%- endfor -%}
+          {%- endpaginate -%}
+        </ul>
+        <p class="mc-duo-empty" data-duo-empty hidden></p>
+        <noscript>
+          <p class="mc-duo-empty">Para elegir tus perfumes necesitas activar JavaScript en tu navegador.</p>
+        </noscript>
+      </div>
+
+      <aside class="mc-duo-summary" aria-labelledby="mc-duo-summary-title-{{ section.id }}">
+        <p class="mc-duo-summary__title" id="mc-duo-summary-title-{{ section.id }}">Tu selección</p>
+        <ol class="mc-duo-picks" role="list">
+          <li class="mc-duo-pick" data-duo-slot="1">
+            <span class="mc-duo-pick__num" aria-hidden="true">1</span>
+            <span class="mc-duo-pick__text">
+              <span class="mc-duo-pick__name" data-duo-slot-name>Elige tu primer perfume</span>
+              <span class="mc-duo-pick__meta" data-duo-slot-meta></span>
+            </span>
+          </li>
+          <li class="mc-duo-pick" data-duo-slot="2">
+            <span class="mc-duo-pick__num" aria-hidden="true">2</span>
+            <span class="mc-duo-pick__text">
+              <span class="mc-duo-pick__name" data-duo-slot-name>Elige su compañero</span>
+              <span class="mc-duo-pick__meta" data-duo-slot-meta></span>
+            </span>
+          </li>
+        </ol>
+        <button type="button" class="mc-btn mc-btn--dark mc-btn--block mc-duo-cta" data-duo-cta hidden>
+          <span data-duo-cta-label>Añadir al carrito</span>
+        </button>
+        <p class="mc-duo-error" data-duo-error role="alert" hidden></p>
+        <div class="mc-duo-added" data-duo-added hidden>
+          <p class="mc-duo-added__title">Agregados al carrito ✓</p>
+          <p class="mc-duo-added__text" data-duo-added-text></p>
+          <div class="mc-duo-added__actions">
+            <button type="button" class="mc-btn mc-btn--dark mc-btn--block" data-duo-again>Elegir otros dos</button>
+            <a class="mc-duo-added__cart" href="{{ routes.cart_url }}">Ver carrito</a>
+          </div>
+        </div>
+        <button type="button" class="mc-duo-reset" data-duo-reset hidden>Empezar de nuevo</button>
+      </aside>
+    </div>
+
+    <p class="visually-hidden" aria-live="polite" data-duo-live></p>
+
+    <script type="application/json" data-duo-pairs>{{ datos }}</script>
+  </mc-duo>
+</div>
+
+{% stylesheet %}
+  .mc-duo { display: block; color: #151515; }
+  .mc-duo-head { display: flex; flex-direction: column; align-items: center; gap: 0.85rem; text-align: center; margin: 0 auto 2.25rem; max-width: 44rem; }
+  .mc-duo-invite { margin: 0; padding: 0.45rem 1rem; border: 1px solid #c6a66b; border-radius: 999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #151515; background: #f4f0e8; }
+  .mc-duo-title { margin: 0; font-family: var(--font-heading--family); font-weight: 400; font-size: clamp(3rem, 12vw, 5.5rem); line-height: 1; letter-spacing: 0.04em; }
+  .mc-duo-sub { margin: 0.25rem 0 0; font-family: var(--font-heading--family); font-size: clamp(1.35rem, 4vw, 1.85rem); line-height: 1.25; }
+  .mc-duo-steps { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.25rem; font-size: 0.8125rem; letter-spacing: 0.04em; color: #66615a; }
+  .mc-duo-steps li { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .mc-duo-steps span { font-family: var(--font-heading--family); font-size: 1rem; color: #c6a66b; }
+  .mc-duo-steps li.is-current { color: #151515; font-weight: 600; }
+
+  .mc-duo-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  @media (min-width: 990px) { .mc-duo-layout { grid-template-columns: minmax(0, 1fr) 320px; gap: 2rem; } }
+
+  .mc-duo-toolbar { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.25rem; }
+  @media (min-width: 750px) { .mc-duo-toolbar { flex-direction: row; align-items: center; justify-content: space-between; } }
+  .mc-duo-filters { display: flex; gap: 0.5rem; overflow-x: auto; scrollbar-width: none; padding: 2px; margin: -2px; }
+  .mc-duo-filters::-webkit-scrollbar { display: none; }
+  .mc-duo-chip { flex: 0 0 auto; min-height: 40px; padding: 0.45rem 1rem; border: 1px solid #e5ded0; border-radius: 999px; background: #fff; color: #151515; font: inherit; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; }
+  .mc-duo-chip:hover { border-color: #151515; }
+  .mc-duo-chip[aria-pressed='true'] { background: #151515; border-color: #151515; color: #fff; }
+  .mc-duo-chip:focus-visible, .mc-duo-card__pick:focus-visible, .mc-duo-reset:focus-visible, .mc-duo-card__name a:focus-visible, .mc-duo-card__variant select:focus-visible, .mc-duo-added__cart:focus-visible { outline: 2px solid #c6a66b; outline-offset: 3px; }
+  .mc-duo-context { margin: 0; font-size: 0.9375rem; line-height: 1.5; color: #3d3a35; }
+  .mc-duo-context button { padding: 0; border: 0; background: none; font: inherit; color: #151515; text-decoration: underline; text-decoration-color: #c6a66b; text-underline-offset: 3px; cursor: pointer; }
+
+  .mc-duo-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem 0.85rem; }
+  @media (min-width: 750px) { .mc-duo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 1rem; } }
+  @media (min-width: 1200px) { .mc-duo-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .mc-duo-card { display: flex; flex-direction: column; gap: 0.7rem; min-width: 0; }
+  .mc-duo-card[hidden] { display: none; }
+  .mc-duo-card[data-role='first'] { order: -2; }
+  .mc-duo-card[data-role='second'] { order: -1; }
+  .mc-duo-card__media { position: relative; display: block; aspect-ratio: 1; background: #fff; border: 1px solid #efe9dc; border-radius: 10px; overflow: hidden; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+  .mc-duo-card__media img { width: 100%; height: 100%; object-fit: contain; padding: 7%; }
+  .mc-duo-card[data-role='first'] .mc-duo-card__media, .mc-duo-card[data-role='second'] .mc-duo-card__media { border-color: #151515; box-shadow: 0 0 0 1px #151515; }
+  .mc-duo-card[data-role='disabled'] .mc-duo-card__media img { opacity: 0.45; }
+  .mc-duo-card__flag { position: absolute; top: 0.6rem; left: 0.6rem; padding: 0.3rem 0.6rem; border-radius: 999px; background: #151515; color: #fff; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .mc-duo-card__flag:empty { display: none; }
+  .mc-duo-card__body { display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem; flex: 1 1 auto; }
+  .mc-duo-card__body .mc-card-vendor { margin: 0; }
+  .mc-duo-card__name { margin: 0; line-height: 1.25; }
+  .mc-duo-card__name a { color: inherit; text-decoration: none; }
+  .mc-duo-card__name a:hover { text-decoration: underline; text-decoration-color: #c6a66b; text-underline-offset: 3px; }
+  .mc-duo-tag { display: inline-block; margin-top: 0.1rem; padding: 0.15rem 0.55rem; border: 1px solid #c6a66b; border-radius: 4px; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; line-height: 1.5; text-transform: uppercase; color: #151515; }
+  .mc-duo-card__variant { display: flex; flex-direction: column; gap: 0.2rem; width: 100%; margin-top: 0.3rem; font-size: 0.75rem; color: #66615a; }
+  .mc-duo-card__variant select { width: 100%; min-height: 40px; padding: 0.4rem 0.5rem; border: 1px solid #e5ded0; border-radius: 6px; background: #fff; color: #151515; font: inherit; font-size: 0.875rem; }
+  .mc-duo-card__state { margin: 0.2rem 0 0; min-height: 1.4em; font-size: 0.9375rem; font-weight: 600; line-height: 1.4; color: #151515; }
+  .mc-duo-card__state:empty { min-height: 0; margin: 0; }
+  .mc-duo-card[data-role='disabled'] .mc-duo-card__state { font-weight: 400; font-size: 0.8125rem; color: #66615a; }
+  .mc-duo-card__pick { margin-top: auto; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; padding: 0.55rem 0.75rem; background: transparent; color: #151515; border: 1px solid #151515; border-radius: 6px; font-family: var(--font-body--family); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; line-height: 1.2; text-transform: uppercase; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; }
+  .mc-duo-card__pick:hover:not([disabled]) { background: #151515; color: #fff; }
+  .mc-duo-card__pick[aria-pressed='true'] { background: #151515; color: #fff; }
+  .mc-duo-card__pick[disabled] { border-color: #e5ded0; color: #8a847a; cursor: not-allowed; }
+  .mc-duo-empty { margin: 1.5rem 0 0; padding: 1.25rem; background: #f4f0e8; border-radius: 8px; color: #3d3a35; line-height: 1.6; }
+
+  .mc-duo-summary { display: flex; flex-direction: column; gap: 0.9rem; padding: 1.25rem; background: #fff; border: 1px solid #e5ded0; border-top: 2px solid #c6a66b; border-radius: 10px; }
+  @media (min-width: 990px) { .mc-duo-summary { position: sticky; top: calc(var(--header-height, 72px) + 1.25rem); } }
+  @media (max-width: 989px) {
+    .mc-duo-summary { position: sticky; bottom: 0; z-index: 5; margin: 0 -0.25rem; padding: 1rem; border-radius: 10px 10px 0 0; box-shadow: 0 -10px 28px rgba(21, 21, 21, 0.12); }
+    .mc-duo[data-step='0'] .mc-duo-summary { display: none; }
+    .mc-duo-summary__title, .mc-duo-reset { display: none; }
+    body:has(.mc-duo:not([data-step='0'])) .mc-wa-float { opacity: 0; visibility: hidden; pointer-events: none; }
+  }
+  .mc-duo-summary__title { margin: 0; font-family: var(--font-heading--family); font-size: 1.375rem; }
+  .mc-duo-picks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+  .mc-duo-pick { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); gap: 0.6rem; align-items: start; }
+  .mc-duo-pick__num { display: inline-flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; border: 1px solid #c6a66b; border-radius: 50%; font-family: var(--font-heading--family); font-size: 0.9375rem; }
+  .mc-duo-pick.is-filled .mc-duo-pick__num { background: #151515; border-color: #151515; color: #fff; }
+  .mc-duo-pick__text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .mc-duo-pick__name { font-size: 0.9375rem; font-weight: 600; line-height: 1.35; }
+  .mc-duo-pick:not(.is-filled) .mc-duo-pick__name { font-weight: 400; color: #66615a; }
+  .mc-duo-pick__meta { font-size: 0.8125rem; color: #66615a; }
+  .mc-duo-pick__meta:empty { display: none; }
+  .mc-duo-cta[hidden], .mc-duo-error[hidden], .mc-duo-added[hidden] { display: none; }
+  .mc-duo-cta { text-align: center; line-height: 1.3; }
+  .mc-duo-cta[aria-busy='true'] { opacity: 0.7; cursor: progress; }
+  .mc-duo-error { margin: 0; font-size: 0.8125rem; line-height: 1.5; color: #a33a2b; }
+  .mc-duo-added { display: flex; flex-direction: column; gap: 0.6rem; padding-top: 0.85rem; border-top: 1px solid #efe9dc; }
+  /* Con el aviso de "agregado" visible y nada elegido, se ocultan los pasos vacíos. */
+  .mc-duo-summary:has(.mc-duo-added:not([hidden])) .mc-duo-picks:not(:has(.is-filled)) { display: none; }
+  .mc-duo-summary:has(.mc-duo-added:not([hidden])) .mc-duo-picks:not(:has(.is-filled)) + .mc-duo-cta + .mc-duo-error + .mc-duo-added { padding-top: 0; border-top: 0; }
+  .mc-duo-added__title { margin: 0; font-weight: 700; font-size: 0.9375rem; }
+  .mc-duo-added__text { margin: 0; font-size: 0.8125rem; line-height: 1.5; color: #66615a; }
+  .mc-duo-added__text:empty { display: none; }
+  .mc-duo-added__actions { display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; }
+  .mc-duo-added__cart { align-self: center; padding: 0.35rem; font-size: 0.875rem; font-weight: 600; color: #151515; text-decoration: underline; text-decoration-color: #c6a66b; text-underline-offset: 3px; }
+  .mc-duo-reset { align-self: center; padding: 0.35rem; border: 0; background: none; font: inherit; font-size: 0.8125rem; color: #3d3a35; text-decoration: underline; text-decoration-color: #c6a66b; text-underline-offset: 3px; cursor: pointer; }
+  .mc-duo-reset[hidden] { display: none; }
+  /* Celular: resumen fijo compacto (nombres, presentación, subtotal y botón a la vista). */
+  @media (max-width: 989px) {
+    .mc-duo-summary { gap: 0.55rem; padding: 0.8rem 1rem calc(0.8rem + env(safe-area-inset-bottom, 0px)); }
+    .mc-duo-picks { gap: 0.3rem; }
+    .mc-duo-pick { grid-template-columns: 1.4rem minmax(0, 1fr); gap: 0.5rem; align-items: center; }
+    .mc-duo-pick__num { width: 1.4rem; height: 1.4rem; font-size: 0.8125rem; }
+    .mc-duo-pick__text { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 0.4rem; }
+    .mc-duo-pick__name { font-size: 0.875rem; line-height: 1.3; }
+    .mc-duo-pick__meta { font-size: 0.75rem; }
+          .mc-duo-cta { min-height: 44px; padding: 0.65rem 1rem; }
+    .mc-duo-added { gap: 0.4rem; padding-top: 0.5rem; }
+    .mc-duo-added__actions { flex-direction: row; align-items: center; }
+    .mc-duo-added__actions .mc-btn { flex: 1 1 auto; min-height: 44px; padding: 0.6rem 0.75rem; }
+  }
+  @media (max-width: 749px) {
+    .mc-duo-card__flag { top: 0.4rem; left: 0.4rem; max-width: calc(100% - 0.8rem); padding: 0.25rem 0.5rem; font-size: 0.625rem; letter-spacing: 0.04em; white-space: nowrap; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { .mc-duo-card__media, .mc-duo-card__pick { transition: none; } }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('mc-duo')) {
+    const COP = (n) => '$' + Math.round(n).toLocaleString('es-CO').replace(/,/g, '.');
+    const LABEL = { esencial: 'Esencial', plus: 'Plus', premium: 'Premium' };
+
+    customElements.define(
+      'mc-duo',
+      class extends HTMLElement {
+        connectedCallback() {
+          if (this.ready) return;
+          let data = {};
+          try {
+            data = JSON.parse(this.querySelector('[data-duo-pairs]').textContent);
+          } catch (e) {
+            data = {};
+          }
+          this.ready = true;
+          this.pairs = data.pares || {};
+          this.first = null;
+          this.second = null;
+          this.filter = 'todos';
+          this.added = 0;
+          this.cards = Array.from(this.querySelectorAll('[data-duo-card]')).map((el) => ({
+            el,
+            id: el.dataset.id,
+            cat: el.dataset.cat,
+            name: el.dataset.name,
+            input: el.querySelector('[data-variant]'),
+            pick: el.querySelector('[data-duo-pick]'),
+            state: el.querySelector('[data-duo-state]'),
+            flag: el.querySelector('[data-duo-flag]'),
+          }));
+          this.$ = (s) => this.querySelector(s);
+
+          this.addEventListener('click', (e) => {
+            const pick = e.target.closest('[data-duo-pick]');
+            if (pick) return this.onPick(this.cards.find((c) => c.pick === pick));
+            const f = e.target.closest('[data-duo-filter]');
+            if (f) return this.setFilter(f.dataset.duoFilter);
+            if (e.target.closest('[data-duo-cta]')) return this.addToCart();
+            if (e.target.closest('[data-duo-again]')) {
+              this.reset(true);
+              const grid = this.$('.mc-duo-toolbar');
+              if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              return;
+            }
+            if (e.target.closest('[data-duo-reset]')) return this.reset(true);
+          });
+          this.addEventListener('change', (e) => {
+            const card = this.cards.find((c) => c.input === e.target);
+            if (card) this.onVariant(card);
+          });
+          this.updateTiers();
+          this.render();
+        }
+
+        variant(card) {
+          const i = card.input;
+          if (!i) return null;
+          const o = i.tagName === 'SELECT' ? i.selectedOptions[0] : i;
+          return { id: Number(i.value), title: o.dataset.title || '', price: Number(o.dataset.price) / 100, available: o.dataset.available === 'true' };
+        }
+
+        // Pareja con promoción para las variantes elegidas; null si no se ofrece.
+        pair(a, b, va, vb) {
+          if (!a || !b || a === b) return null;
+          va = va || this.variant(a);
+          vb = vb || this.variant(b);
+          if (!va || !vb || !va.available || !vb.available) return null;
+          const key = [va.id, vb.id].sort((x, y) => x - y).join('-');
+          const t = this.pairs[key];
+          if (!t) return null;
+          const subtotal = t[0] * 1000;
+          // El descuento es un monto fijo: si cambió algún precio, la pareja deja de ofrecerse hasta recalcular.
+          if (va.price + vb.price !== t[1]) return null;
+          return { subtotal, va, vb };
+        }
+
+        partners(card) {
+          return this.cards.filter((c) => this.pair(card, c));
+        }
+
+        presentation(v) {
+          return v && v.title && v.title !== 'Default Title' ? 'Presentación: ' + v.title : 'Presentación única';
+        }
+
+        updateTiers() {
+          let min = 0;
+          for (let i = 0; i < this.cards.length; i++) {
+            for (let j = i + 1; j < this.cards.length; j++) {
+              const p = this.pair(this.cards[i], this.cards[j]);
+              if (p && (!min || p.subtotal < min)) min = p.subtotal;
+            }
+          }
+          this.$('[data-duo-sub]').textContent = min ? 'Elige 2 perfumes desde ' + COP(min) : 'Elige 2 perfumes';
+        }
+
+        onPick(card) {
+          if (!card || card.pick.disabled) return;
+          this.clearAdded();
+          const role = card.el.dataset.role;
+          if (role === 'idle') {
+            this.first = card;
+            this.second = null;
+            const n = this.partners(card).length;
+            this.say('Elegiste ' + card.name + '. Tiene ' + n + (n === 1 ? ' compañero disponible.' : ' compañeros disponibles.'));
+          } else if (role === 'first') {
+            this.reset(false);
+            this.say('Quitaste ' + card.name + '. Elige tu primer perfume.');
+          } else if (role === 'partner') {
+            this.second = card;
+            this.say('Elegiste ' + this.first.name + ' y ' + card.name + '.');
+          } else if (role === 'second') {
+            this.second = null;
+            this.say('Quitaste ' + card.name + '. Elige otro compañero.');
+          }
+          this.render();
+        }
+
+        onVariant(card) {
+          this.clearAdded();
+          if (this.first && this.second && (card === this.first || card === this.second) && !this.pair(this.first, this.second)) {
+            const msg = card === this.first
+              ? 'Con esta presentación, ' + this.second.name + ' ya no combina con ' + card.name + '. Elige otro compañero.'
+              : 'Esa presentación de ' + card.name + ' no combina con ' + this.first.name + '. Elige otro compañero.';
+            this.second = null;
+            this.say(msg);
+          }
+          this.updateTiers();
+          this.render();
+        }
+
+        setFilter(f) {
+          this.filter = f;
+          this.querySelectorAll('[data-duo-filter]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.duoFilter === f ? 'true' : 'false'));
+          this.render();
+        }
+
+        reset(announce) {
+          this.first = null;
+          this.second = null;
+          this.clearAdded();
+          if (announce) this.say('Elige tu primer perfume.');
+          this.render();
+        }
+
+        clearAdded() {
+          this.$('[data-duo-added]').hidden = true;
+          this.$('[data-duo-error]').hidden = true;
+        }
+
+        say(t) {
+          const live = this.$('[data-duo-live]');
+          live.textContent = '';
+          setTimeout(() => (live.textContent = t), 30);
+        }
+
+        // Agrega los dos perfumes al carrito con el mismo evento que usa la ficha del tema,
+        // así el contador y el carrito lateral de Horizon se actualizan solos.
+        async addToCart() {
+          const p = this.first && this.second ? this.pair(this.first, this.second) : null;
+          const cta = this.$('[data-duo-cta]');
+          if (!p || cta.getAttribute('aria-busy') === 'true') return;
+          const label = this.$('[data-duo-cta-label]');
+          const err = this.$('[data-duo-error]');
+          err.hidden = true;
+          cta.setAttribute('aria-busy', 'true');
+          label.textContent = 'Agregando…';
+          const routes = typeof Theme !== 'undefined' && Theme && Theme.routes ? Theme.routes : null;
+          const addUrl = (routes && routes.cart_add_url) || this.dataset.cartAddUrl || '/cart/add';
+          const cartUrl = (routes && routes.cart_url) || this.dataset.cartUrl || '/cart';
+          const sectionIds = Array.from(document.querySelectorAll('cart-items-component'))
+            .map((el) => el.dataset.sectionId)
+            .filter(Boolean);
+          let Ev = null;
+          let deferred = null;
+          try {
+            Ev = (await import('@shopify/events')).CartLinesUpdateEvent;
+            deferred = Ev.createPromise();
+            this.dispatchEvent(new Ev({ action: 'add', context: 'product', lines: [p.va, p.vb].map((v) => ({ merchandiseId: String(v.id), quantity: 1 })), promise: deferred.promise }));
+          } catch (e) {
+            deferred = null;
+          }
+          try {
+            const res = await fetch(addUrl, {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+              body: JSON.stringify({ items: [p.va, p.vb].map((v) => ({ id: v.id, quantity: 1 })), sections: sectionIds.join(',') }),
+            });
+            const data = await res.json();
+            if (!res.ok || data.status) throw new Error(data.description || data.message || 'No se pudo agregar');
+            const cart = await fetch(cartUrl + '.js', { credentials: 'same-origin', headers: { Accept: 'application/json' } }).then((r) => r.json());
+            if (deferred) {
+              deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'mc-duo', itemCount: 2, sections: data.sections, didError: false } });
+            }
+            this.added += 1;
+            const names = this.first.name + ' + ' + this.second.name;
+            this.first = null;
+            this.second = null;
+            // El aviso se muestra antes de redibujar: así el resumen sigue visible en celular.
+            this.$('[data-duo-added-text]').textContent = names + '. Puedes elegir otros dos o seguir comprando.';
+            this.$('[data-duo-added]').hidden = false;
+            this.render();
+            this.say('Agregados al carrito: ' + names + '.');
+            const again = this.$('[data-duo-again]');
+            if (again) again.focus({ preventScroll: true });
+          } catch (e) {
+            if (deferred) deferred.reject(e);
+            err.textContent = 'No pudimos agregarlos: ' + ((e && e.message) || 'inténtalo de nuevo') + '.';
+            err.hidden = false;
+          }
+          cta.removeAttribute('aria-busy');
+          label.textContent = 'Añadir al carrito';
+        }
+
+        render() {
+          const step = this.first ? (this.second ? 2 : 1) : 0;
+          const added = !this.$('[data-duo-added]').hidden;
+          this.dataset.step = String(added ? 2 : step);
+          this.querySelectorAll('[data-duo-stepitem]').forEach((li) => li.classList.toggle('is-current', Number(li.dataset.duoStepitem) === step + 1));
+          let visible = 0;
+
+          for (const c of this.cards) {
+            const v = this.variant(c);
+            let role;
+            let state = '';
+            let label = 'Elegir';
+            let aria = 'Elegir ' + c.name;
+            let flag = '';
+            let disabled = false;
+            if (!this.first) {
+              if (!v || !v.available) {
+                role = 'disabled';
+                state = 'Agotado por ahora';
+                label = 'Agotado';
+                disabled = true;
+              } else if (!this.partners(c).length) {
+                role = 'disabled';
+                state = 'Sin pareja disponible por ahora';
+                label = 'No disponible';
+                disabled = true;
+              } else {
+                role = 'idle';
+                aria = 'Elegir ' + c.name + ' como primer perfume';
+              }
+            } else if (c === this.first) {
+              role = 'first';
+              flag = 'Tu primer perfume';
+              label = 'Quitar';
+              aria = 'Quitar ' + c.name;
+            } else {
+              const p = this.pair(this.first, c);
+              if (!p) {
+                role = 'off';
+              } else {
+                role = c === this.second ? 'second' : 'partner';
+                if (role === 'second') {
+                  flag = 'Tu compañero';
+                  label = 'Quitar';
+                  aria = 'Quitar ' + c.name;
+                } else {
+                  label = this.second ? 'Cambiar por este' : 'Elegir como compañero';
+                  aria = 'Elegir ' + c.name + ' como compañero de ' + this.first.name;
+                }
+              }
+            }
+            c.el.dataset.role = role;
+            const pinned = role === 'first' || role === 'second';
+            const hide = role === 'off' || (!pinned && this.filter !== 'todos' && c.cat !== this.filter);
+            c.el.hidden = hide;
+            if (!hide && !pinned) visible++;
+            c.state.textContent = state;
+            c.flag.textContent = flag;
+            c.pick.textContent = label;
+            c.pick.disabled = disabled;
+            c.pick.setAttribute('aria-pressed', pinned ? 'true' : 'false');
+            c.pick.setAttribute('aria-label', aria);
+          }
+
+          const ctx = this.$('[data-duo-context]');
+          const empty = this.$('[data-duo-empty]');
+          const filterName = this.filter === 'todos' ? '' : ' ' + LABEL[this.filter];
+          if (!this.first) {
+            ctx.textContent = 'Elige tu primer perfume.';
+          } else {
+            const n = this.partners(this.first).length;
+            ctx.innerHTML = '';
+            ctx.append(
+              (this.second ? 'Puedes cambiar el compañero de ' : n + (n === 1 ? ' compañero para ' : ' compañeros para ')) + this.first.name + '. '
+            );
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('data-duo-reset', '');
+            b.textContent = 'Cambiar primer perfume';
+            ctx.append(b);
+          }
+          if (!visible && (this.filter !== 'todos' || !this.first)) {
+            empty.hidden = false;
+            empty.textContent = this.first
+              ? 'No hay compañeros' + filterName + ' para ' + this.first.name + '. Prueba con otra categoría.'
+              : 'No hay perfumes' + filterName + ' disponibles en este momento.';
+          } else {
+            empty.hidden = true;
+          }
+
+          this.renderSummary();
+        }
+
+        renderSummary() {
+          const slots = this.querySelectorAll('[data-duo-slot]');
+          const picks = [this.first, this.second];
+          const empty = ['Elige tu primer perfume', 'Elige su compañero'];
+          slots.forEach((slot, i) => {
+            const c = picks[i];
+            slot.classList.toggle('is-filled', !!c);
+            slot.querySelector('[data-duo-slot-name]').textContent = c ? c.name : empty[i];
+            slot.querySelector('[data-duo-slot-meta]').textContent = c ? this.presentation(this.variant(c)) : '';
+          });
+          const cta = this.$('[data-duo-cta]');
+          this.$('.mc-duo-reset').hidden = !this.first;
+          const p = this.first && this.second ? this.pair(this.first, this.second) : null;
+          if (!p) {
+            cta.hidden = true;
+            return;
+          }
+          cta.hidden = false;
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MC · 2x300",
+  "tag": "section",
+  "class": "mc-duo-shopify-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "2x300" },
+    { "type": "checkbox", "id": "show_invitation", "label": "Mostrar invitación exclusiva", "default": true, "info": "Fase de lanzamiento reservada a clientes." },
+    { "type": "text", "id": "invitation", "label": "Texto de la invitación", "default": "Una invitación exclusiva para clientes de Maison Carvajal" },
+    { "type": "collection", "id": "collection", "label": "Colección de perfumes", "info": "Por defecto, Árabes. Participan los productos con etiqueta duo-esencial, duo-plus o duo-premium." },
+    { "type": "header", "content": "Espaciado" },
+    { "type": "range", "id": "padding-block-start", "label": "Arriba", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding-block-end", "label": "Abajo", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "presets": [{ "name": "MC · 2x300" }]
+}
+{% endschema %}

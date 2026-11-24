@@ -1,0 +1,450 @@
+{%- comment -%}
+  MAISON CARVAJAL - Inicio de marca centrado (letras que aparecen y estela de aroma con partículas)
+  y, debajo, vitrina de perfumes en tendencia: una pila de frascos que rota sola
+  (se pausa al pasar el mouse, al enfocar o con el botón) y se controla con flechas,
+  puntos, teclado o deslizando en el celular. Sin autoplay si el usuario pide menos movimiento.
+{%- endcomment -%}
+
+{%- comment -%} Tipografía de la home (no afecta al logo, al nombre ni al eslogan). {%- endcomment -%}
+{%- liquid
+  assign mc_font = section.settings.font_style
+  case mc_font
+    when 'editorial'
+      assign mc_display = "'Cormorant Garamond', Georgia, serif"
+      assign mc_text = "'Jost', Arial, sans-serif"
+      assign mc_font_url = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@400;500;600&display=swap'
+    when 'moderno'
+      assign mc_display = "'Playfair Display', Georgia, serif"
+      assign mc_text = "'Montserrat', Arial, sans-serif"
+      assign mc_font_url = 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap'
+    else
+      assign mc_display = "Georgia, 'Times New Roman', serif"
+      assign mc_text = 'Arial, Helvetica, sans-serif'
+      assign mc_font_url = ''
+  endcase
+-%}
+{%- if mc_font_url != blank -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ mc_font_url }}">
+{%- endif -%}
+<style>
+  .mc-hero2, .mc-section-head, .mc-collections, .mc-houses, .mc-advice, .mc-trends, .mc-quiz, .mc-ig {
+    --font-heading--family: {{ mc_display }};
+    --font-body--family: {{ mc_text }};
+  }
+  .mc-hero2__copy, .mc-trends, .mc-quiz, .mc-houses, .mc-advice, .mc-ig { font-family: {{ mc_text }}; }
+  {%- if mc_font == 'editorial' %}
+  /* Cormorant tiene minúsculas pequeñas: se compensa en nombres y títulos cortos. */
+  .mc-card-name, .mc-tab__title { font-size: 1.22rem; }
+  .mc-spot__name { font-size: 1.8rem; }
+  .mc-choice__title { font-size: 1.3rem; }
+  {%- endif %}
+</style>
+
+<div class="section section--full-width mc-hero2">
+  <mc-hero class="mc-hero2__inner">
+    <canvas class="mc-hero2__aroma" aria-hidden="true"></canvas>
+    <div class="mc-hero2__copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="mc-eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h1 class="mc-hero__title" data-letters>{{ section.settings.heading }}</h1>
+      <span class="mc-rule" aria-hidden="true"></span>
+      {%- if section.settings.tagline != blank -%}
+        <p class="mc-hero__tagline">{{ section.settings.tagline }}</p>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="mc-hero__sub">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+      <div class="mc-hero__ctas">
+        <a class="mc-btn mc-btn--light" href="{{ section.settings.cta_url | default: routes.all_products_collection_url }}">
+          {{- section.settings.cta_label -}}
+        </a>
+        {% render 'mc-whatsapp', class: 'mc-btn--ghost', label: section.settings.cta2_label %}
+      </div>
+      <p class="mc-hero__collections">Nicho &middot; Diseñador &middot; Árabes</p>
+    </div>
+
+    {%- if section.settings.products.count > 0 -%}
+      <mc-spotlight class="mc-spot" role="region" aria-roledescription="carrusel" aria-label="{{ section.settings.spot_label | escape }}">
+        <p class="mc-spot__label"><span class="mc-spot__pulse" aria-hidden="true"></span>{{ section.settings.spot_label }}</p>
+        <div class="mc-spot__stage">
+          {%- for p in section.settings.products limit: 8 -%}
+            {%- liquid
+              if p.price > 0
+                assign p_price = p.price | money_without_trailing_zeros
+              else
+                assign p_price = 'Consultar precio'
+              endif
+            -%}
+            <a
+              class="mc-spot__card"
+              href="{{ p.url }}"
+              data-vendor="{{ p.vendor | escape }}"
+              data-name="{{ p.title | escape }}"
+              data-price="{{ p_price | escape }}"
+              aria-label="{{ p.vendor | escape }} {{ p.title | escape }}"
+            >
+              {%- if p.featured_image -%}
+                {{
+                  p.featured_image
+                  | image_url: width: 700
+                  | image_tag: loading: 'eager', widths: '320, 480, 700', sizes: '(min-width: 990px) 28vw, 62vw', alt: ''
+                }}
+              {%- endif -%}
+            </a>
+          {%- endfor -%}
+        </div>
+        <div class="mc-spot__meta" aria-live="polite">
+          <span class="mc-card-vendor" data-meta="vendor"></span>
+          <span class="mc-spot__name" data-meta="name"></span>
+          <span class="mc-spot__price" data-meta="price"></span>
+        </div>
+        <div class="mc-spot__controls">
+          <button type="button" class="mc-spot__btn" data-action="prev" aria-label="Perfume anterior">
+            <span aria-hidden="true">&larr;</span>
+          </button>
+          <div class="mc-spot__dots" role="group" aria-label="Elegir perfume"></div>
+          <button type="button" class="mc-spot__btn" data-action="next" aria-label="Perfume siguiente">
+            <span aria-hidden="true">&rarr;</span>
+          </button>
+          <button type="button" class="mc-spot__btn mc-spot__btn--toggle" data-action="toggle" aria-label="Pausar rotación">
+            <span aria-hidden="true" data-icon></span>
+          </button>
+        </div>
+      </mc-spotlight>
+    {%- endif -%}
+  </mc-hero>
+</div>
+
+{% stylesheet %}
+  .mc-hero2 [hidden] { display: none !important; }
+  /* El tema aplica su propio fondo a .section: se fuerza el negro del catálogo. */
+  .section.mc-hero2, .mc-hero2, .mc-hero2__inner { background-color: #151515 !important; color: #fff; }
+  .mc-hero2 { overflow: hidden; }
+  .mc-hero2__inner { position: relative; display: flex; flex-direction: column; align-items: center; gap: clamp(3rem, 8vw, 4.5rem); width: 100%; padding: clamp(4rem, 12vw, 8rem) 1.25rem clamp(3rem, 8vw, 5.5rem); }
+  .mc-hero2__inner > *:not(.mc-hero2__aroma) { position: relative; z-index: 1; }
+  .mc-hero2__aroma { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1.2s ease 0.4s; }
+  .mc-hero2__aroma.is-on { opacity: 1; }
+  /* Las letras del nombre y el eslogan siempre en Georgia, como el catálogo. */
+  .mc-hero2 .mc-hero__title, .mc-hero2 .mc-hero__tagline { font-family: Georgia, 'Times New Roman', serif !important; }
+
+  /* Aparición al hacer scroll: solo cuando el script la activa (nunca en el editor ni con movimiento reducido). */
+  .mc-reveal-on .mc-rv { transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--mc-d, 0ms), transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--mc-d, 0ms); }
+  .mc-reveal-on .mc-rv:not(.is-in) { opacity: 0; transform: translateY(32px); }
+  .mc-reveal-on .mc-section-head.mc-rv .mc-rule { transform: scaleX(0); transform-origin: center; transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.35s; }
+  .mc-reveal-on .mc-section-head.mc-rv.is-in .mc-rule { transform: scaleX(1); }
+  .mc-hero2__copy { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.25rem; max-width: 60rem; }
+  .mc-hero2 .mc-eyebrow { color: #c6a66b; }
+  .mc-hero2 .mc-hero__title, .mc-hero2 .mc-hero__tagline { color: #fff; }
+  .mc-hero2 .mc-hero__title { font-family: Georgia, 'Times New Roman', serif; }
+  .mc-hero2 .mc-hero__tagline { font-family: Georgia, 'Times New Roman', serif; }
+  .mc-letter { display: inline-block; opacity: 0; transform: translateY(0.35em); filter: blur(6px); animation: mc-letter-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; animation-delay: calc(var(--i) * 55ms + 150ms); }
+  .mc-word { display: inline-block; white-space: nowrap; }
+  @keyframes mc-letter-in { to { opacity: 1; transform: none; filter: none; } }
+  .mc-hero2 .mc-rule { transform-origin: center; animation: mc-rule-in 0.9s ease 0.9s both; }
+  @keyframes mc-rule-in { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  .mc-spot { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .mc-spot__label { margin: 0; display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: #c6a66b; }
+  .mc-spot__pulse { width: 7px; height: 7px; border-radius: 50%; background: #c6a66b; animation: mc-pulse 2s ease-in-out infinite; }
+  @keyframes mc-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.7); } }
+  .mc-spot__stage { position: relative; width: min(78vw, 360px); aspect-ratio: 4 / 5; touch-action: pan-y; }
+  .mc-spot__card { position: absolute; inset: 0; display: block; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45); transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.6s ease, filter 0.6s ease; opacity: 0; pointer-events: none; transform: translateX(0) scale(0.8); }
+  .mc-spot__card img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
+  .mc-spot__card[data-pos='0'] { opacity: 1; pointer-events: auto; transform: translateX(0) rotate(0) scale(1); z-index: 3; }
+  .mc-spot__card[data-pos='1'] { opacity: 0.8; pointer-events: auto; transform: translateX(34%) rotate(6deg) scale(0.84); z-index: 2; filter: brightness(0.3) saturate(0.6); cursor: pointer; }
+  .mc-spot__card[data-pos='-1'] { opacity: 0.8; pointer-events: auto; transform: translateX(-34%) rotate(-6deg) scale(0.84); z-index: 2; filter: brightness(0.3) saturate(0.6); cursor: pointer; }
+  .mc-spot__card[data-pos='1']:hover, .mc-spot__card[data-pos='-1']:hover { filter: brightness(0.5); }
+  .mc-spot__card[data-pos='0']:hover img { transform: scale(1.04); }
+  .mc-spot__card img { transition: transform 0.5s ease; }
+  .mc-spot__card:focus-visible { outline: 2px solid #c6a66b; outline-offset: 4px; }
+  .mc-spot__meta { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; min-height: 4.6rem; text-align: center; }
+  .mc-spot__meta .mc-card-vendor { color: rgba(255, 255, 255, 0.7); }
+  .mc-spot__name { font-family: var(--font-heading--family); font-size: 1.5rem; }
+  .mc-spot__price { font-size: 0.875rem; letter-spacing: 0.04em; color: #c6a66b; }
+  .mc-spot__controls { display: flex; align-items: center; gap: 0.75rem; }
+  .mc-spot__btn { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 50%; background: transparent; color: #fff; font-size: 1rem; cursor: pointer; transition: border-color 0.2s ease, color 0.2s ease; }
+  .mc-spot__btn:hover { border-color: #c6a66b; color: #c6a66b; }
+  .mc-spot__btn:focus-visible, .mc-spot__dot:focus-visible { outline: 2px solid #c6a66b; outline-offset: 3px; }
+  .mc-spot__btn [data-icon] { display: inline-flex; }
+  .mc-spot__dots { display: flex; gap: 0.15rem; }
+  .mc-spot__dot { width: 24px; height: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; position: relative; }
+  .mc-spot__dot::after { content: ''; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; border-radius: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.35); transition: background 0.2s ease, width 0.2s ease; }
+  .mc-spot__dot[aria-current='true']::after { background: #c6a66b; width: 18px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) {
+    .mc-spot__card, .mc-spot__card img, .mc-spot__dot::after { transition: none; }
+    .mc-spot__pulse, .mc-hero2 .mc-rule { animation: none; }
+    .mc-letter { animation: none; opacity: 1; transform: none; filter: none; }
+    .mc-hero2__aroma { display: none; }
+    .mc-reveal-on .mc-rv, .mc-reveal-on .mc-rv:not(.is-in) { opacity: 1; transform: none; transition: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('mc-hero')) {
+    customElements.define(
+      'mc-hero',
+      class extends HTMLElement {
+        connectedCallback() {
+          // Letras del nombre que aparecen una a una (el texto completo queda para lectores de pantalla).
+          const title = this.querySelector('[data-letters]');
+          if (title && !title.dataset.split) {
+            const text = title.textContent.trim();
+            title.dataset.split = '1';
+            title.setAttribute('aria-label', text);
+            title.innerHTML = '';
+            let i = 0;
+            text.split(/\s+/).forEach((word, w) => {
+              if (w > 0) title.appendChild(document.createTextNode(' '));
+              // Cada palabra queda junta para que nunca se parta entre líneas.
+              const wordEl = document.createElement('span');
+              wordEl.className = 'mc-word';
+              wordEl.setAttribute('aria-hidden', 'true');
+              Array.from(word).forEach((ch) => {
+                const span = document.createElement('span');
+                span.className = 'mc-letter';
+                span.style.setProperty('--i', i++);
+                span.textContent = ch;
+                wordEl.appendChild(span);
+              });
+              title.appendChild(wordEl);
+              i++;
+            });
+          }
+          this.initAroma();
+        }
+        // Estela de aroma: partículas doradas que suben como el perfume y se apartan del cursor o del dedo.
+        initAroma() {
+          const canvas = this.querySelector('.mc-hero2__aroma');
+          if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          const mobile = window.matchMedia('(max-width: 749px)').matches;
+          const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
+          const count = mobile ? 50 : 115;
+          const pointer = { x: -9999, y: -9999 };
+          let w = 0, h = 0, raf = 0, visible = false;
+          const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+          const spawn = (p, anywhere) => {
+            p.x = w / 2 + gauss() * w * 0.42;
+            p.y = anywhere ? Math.random() * h : h + 10 + Math.random() * 40;
+            p.r = 0.8 + Math.random() * 2.3;
+            p.vy = 0.18 + Math.random() * 0.5;
+            p.sway = 0.2 + Math.random() * 0.5;
+            p.seed = Math.random() * 1000;
+            p.a = 0.35 + Math.random() * 0.55;
+            return p;
+          };
+          const resize = () => {
+            const r = this.getBoundingClientRect();
+            w = r.width; h = r.height;
+            canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          };
+          resize();
+          const parts = Array.from({ length: count }, () => spawn({}, true));
+          const tick = (t) => {
+            ctx.clearRect(0, 0, w, h);
+            for (const p of parts) {
+              p.y -= p.vy;
+              p.x += Math.sin(t / 1400 + p.seed) * p.sway * 0.35;
+              const dx = p.x - pointer.x, dy = p.y - pointer.y, d = Math.hypot(dx, dy);
+              if (d < 130 && d > 0.1) { const f = (1 - d / 130) * 2.2; p.x += (dx / d) * f; p.y += (dy / d) * f; }
+              if (p.y < -12 || p.x < -20 || p.x > w + 20) spawn(p, false);
+              const fadeIn = Math.min(1, (h - p.y) / (h * 0.2));
+              const fadeOut = Math.min(1, p.y / (h * 0.3));
+              const alpha = Math.max(0, p.a * fadeIn * fadeOut);
+              ctx.beginPath(); ctx.fillStyle = `rgba(198,166,107,${alpha * 0.2})`; ctx.arc(p.x, p.y, p.r * 5, 0, 6.283); ctx.fill();
+              ctx.beginPath(); ctx.fillStyle = `rgba(232,212,170,${alpha})`; ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+            }
+            raf = requestAnimationFrame(tick);
+          };
+          const start = () => { if (!raf && visible && !document.hidden) raf = requestAnimationFrame(tick); };
+          const stop = () => { cancelAnimationFrame(raf); raf = 0; };
+          this.onMove = (e) => { const r = this.getBoundingClientRect(); pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; };
+          this.onLeave = () => { pointer.x = pointer.y = -9999; };
+          this.onVis = () => (document.hidden ? stop() : start());
+          this.addEventListener('pointermove', this.onMove);
+          this.addEventListener('pointerleave', this.onLeave);
+          document.addEventListener('visibilitychange', this.onVis);
+          this.ro = new ResizeObserver(resize);
+          this.ro.observe(this);
+          this.io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; visible ? start() : stop(); });
+          this.io.observe(this);
+          this.stopAroma = stop;
+          canvas.classList.add('is-on');
+        }
+        disconnectedCallback() {
+          if (this.stopAroma) this.stopAroma();
+          if (this.ro) this.ro.disconnect();
+          if (this.io) this.io.disconnect();
+          this.removeEventListener('pointermove', this.onMove);
+          this.removeEventListener('pointerleave', this.onLeave);
+          document.removeEventListener('visibilitychange', this.onVis);
+        }
+      }
+    );
+  }
+  if (!customElements.get('mc-spotlight')) {
+    customElements.define(
+      'mc-spotlight',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.cards = Array.from(this.querySelectorAll('.mc-spot__card'));
+          if (!this.cards.length) return;
+          this.index = 0;
+          this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          this.paused = this.reduced || this.cards.length < 2;
+          this.hovering = false;
+          this.dotsWrap = this.querySelector('.mc-spot__dots');
+          this.toggleBtn = this.querySelector('[data-action="toggle"]');
+          this.dotsWrap.innerHTML = '';
+          this.dots = this.cards.map((card, i) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'mc-spot__dot';
+            dot.setAttribute('aria-label', `${card.dataset.vendor} ${card.dataset.name}`);
+            dot.addEventListener('click', () => this.go(i, true));
+            this.dotsWrap.appendChild(dot);
+            return dot;
+          });
+          this.querySelector('[data-action="prev"]').addEventListener('click', () => this.go(this.index - 1, true));
+          this.querySelector('[data-action="next"]').addEventListener('click', () => this.go(this.index + 1, true));
+          this.toggleBtn.addEventListener('click', () => this.setPaused(!this.paused));
+          this.cards.forEach((card, i) => {
+            card.addEventListener('click', (e) => {
+              if (i !== this.index) {
+                e.preventDefault();
+                this.go(i, true);
+              }
+            });
+          });
+          this.addEventListener('mouseenter', () => (this.hovering = true));
+          this.addEventListener('mouseleave', () => (this.hovering = false));
+          this.addEventListener('focusin', () => (this.hovering = true));
+          this.addEventListener('focusout', () => (this.hovering = false));
+          this.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') { e.preventDefault(); this.go(this.index + 1, true); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); this.go(this.index - 1, true); }
+          });
+          const stage = this.querySelector('.mc-spot__stage');
+          let startX = null;
+          stage.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+          stage.addEventListener('touchend', (e) => {
+            if (startX === null) return;
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 40) this.go(this.index + (dx < 0 ? 1 : -1), true);
+            startX = null;
+          });
+          this.setPaused(this.paused);
+          this.render();
+          this.timer = setInterval(() => {
+            if (!this.paused && !this.hovering && !document.hidden) this.go(this.index + 1);
+          }, 4500);
+        }
+        disconnectedCallback() {
+          clearInterval(this.timer);
+        }
+        setPaused(value) {
+          this.paused = value;
+          if (!this.toggleBtn) return;
+          this.toggleBtn.setAttribute('aria-label', value ? 'Reanudar rotación' : 'Pausar rotación');
+          this.toggleBtn.querySelector('[data-icon]').innerHTML = value
+            ? '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.5 1.2v9.6L10.5 6z"/></svg>'
+            : '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="2" y="1.5" width="2.6" height="9" rx="0.5"/><rect x="7.4" y="1.5" width="2.6" height="9" rx="0.5"/></svg>';
+          this.toggleBtn.hidden = this.cards.length < 2;
+        }
+        go(i) {
+          const n = this.cards.length;
+          this.index = ((i % n) + n) % n;
+          this.render();
+        }
+        render() {
+          const n = this.cards.length;
+          this.cards.forEach((card, i) => {
+            let pos = i - this.index;
+            if (pos > n / 2) pos -= n;
+            if (pos < -n / 2) pos += n;
+            const visible = Math.abs(pos) <= 1 && n > 1 ? pos : pos === 0 ? 0 : 'off';
+            card.dataset.pos = String(visible);
+            const active = pos === 0;
+            card.tabIndex = active ? 0 : -1;
+            card.setAttribute('aria-hidden', active ? 'false' : 'true');
+          });
+          this.dots.forEach((d, i) => d.setAttribute('aria-current', i === this.index ? 'true' : 'false'));
+          const c = this.cards[this.index];
+          this.querySelector('[data-meta="vendor"]').textContent = c.dataset.vendor;
+          this.querySelector('[data-meta="name"]').textContent = c.dataset.name;
+          this.querySelector('[data-meta="price"]').textContent = c.dataset.price;
+        }
+      }
+    );
+  }
+
+  // Aparición al hacer scroll de títulos y tarjetas de la home (en cascada dentro de cada grupo).
+  if (!window.__mcReveal) {
+    window.__mcReveal = true;
+    const runReveal = () => {
+      const root = document.documentElement;
+      if (
+        root.classList.contains('shopify-design-mode') ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        !('IntersectionObserver' in window)
+      ) return;
+      const sel = '.mc-section-head, .mc-tablist, .mc-trends .mc-tcard, .mc-collection-tile, .mc-houses > div, .mc-steps li, .mc-advice > div:first-child, .mc-quiz__box, .mc-ig__item, .mc-ig__actions';
+      const els = Array.from(document.querySelectorAll(sel));
+      if (!els.length) return;
+      els.forEach((el) => {
+        const group = Array.from(el.parentElement.children).filter((c) => c.matches(sel));
+        el.style.setProperty('--mc-d', `${Math.min(group.indexOf(el), 5) * 90}ms`);
+        el.classList.add('mc-rv');
+      });
+      root.classList.add('mc-reveal-on');
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((en) => {
+          if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
+        }),
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
+      );
+      els.forEach((el) => io.observe(el));
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runReveal);
+    else runReveal();
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MC · Hero con vitrina",
+  "tag": "section",
+  "class": "mc-hero2-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Antetítulo", "default": "Perfumería" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Maison Carvajal" },
+    { "type": "text", "id": "tagline", "label": "Eslogan", "default": "Fragancias que cuentan tu historia" },
+    { "type": "textarea", "id": "subheading", "label": "Texto", "default": "Perfumes originales nicho, de diseñador y árabes, con asesoría personalizada." },
+    { "type": "text", "id": "cta_label", "label": "Botón principal", "default": "Explorar el catálogo" },
+    { "type": "url", "id": "cta_url", "label": "Enlace del botón principal" },
+    { "type": "text", "id": "cta2_label", "label": "Botón de WhatsApp", "default": "Recibir asesoría" },
+    { "type": "header", "content": "Tipografía de la página de inicio" },
+    {
+      "type": "select",
+      "id": "font_style",
+      "label": "Estilo de letra",
+      "info": "Cambia títulos y textos de las secciones MC. El nombre Maison Carvajal, el eslogan y el logo no cambian.",
+      "options": [
+        { "value": "clasico", "label": "Clásico: Georgia y Arial (como el catálogo)" },
+        { "value": "editorial", "label": "Editorial: Cormorant Garamond y Jost" },
+        { "value": "moderno", "label": "Moderno: Playfair Display y Montserrat" }
+      ],
+      "default": "editorial"
+    },
+    { "type": "header", "content": "Vitrina" },
+    { "type": "text", "id": "spot_label", "label": "Título de la vitrina", "default": "En tendencia" },
+    { "type": "product_list", "id": "products", "label": "Perfumes de la vitrina", "limit": 8 }
+  ],
+  "presets": [{ "name": "MC · Hero con vitrina" }]
+}
+{% endschema %}

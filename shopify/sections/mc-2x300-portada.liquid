@@ -1,0 +1,304 @@
+{%- comment -%}
+  MAISON CARVAJAL · 2x300 en la portada.
+  El cliente elige llevar 2, 4 o 6 perfumes y la repisa se llena con parejas sugeridas que se añaden de una vez.
+  - Cada bloque es una pareja. Solo se muestra si ambos perfumes están disponibles y la pareja sigue en la promoción
+    con los precios vigentes (snippets/mc-2x300-pares.liquid). No muestra el total: el descuento aparece en el carrito.
+  - Sin JavaScript queda el enlace a la página 2x300.
+{%- endcomment -%}
+{%- capture pares_json -%}{% render 'mc-2x300-pares' %}{%- endcapture -%}
+{%- assign inicio = section.settings.start | plus: 0 -%}
+{%- assign cuenta = 0 -%}
+{%- capture lista -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign p1 = block.settings.product_1
+      assign p2 = block.settings.product_2
+      assign ok = false
+      if p1 != blank and p2 != blank and p1.available and p2.available
+        assign v1 = p1.selected_or_first_available_variant
+        assign v2 = p2.selected_or_first_available_variant
+        assign suma = v1.price | plus: v2.price | divided_by: 100
+        assign a = v1.id
+        assign b = v2.id
+        if a > b
+          assign a = v2.id
+          assign b = v1.id
+        endif
+        assign base = '"' | append: a | append: '-' | append: b | append: '":['
+        assign k300 = base | append: '300,' | append: suma | append: ']'
+        assign k350 = base | append: '350,' | append: suma | append: ']'
+        assign k400 = base | append: '400,' | append: suma | append: ']'
+        if pares_json contains k300 or pares_json contains k350 or pares_json contains k400
+          assign ok = true
+        endif
+      endif
+    -%}
+    {%- if ok -%}
+      {%- assign cuenta = cuenta | plus: 1 -%}
+      {%- assign llevados = cuenta | times: 2 -%}
+      <li class="mc-p300__pair" data-pair data-va="{{ v1.id }}" data-vb="{{ v2.id }}"{% if llevados > inicio %} hidden{% endif %} {{ block.shopify_attributes }}>
+        {%- for p in (1..2) -%}
+          {%- if p == 1 -%}{%- assign prod = p1 -%}{%- else -%}{%- assign prod = p2 -%}{%- endif -%}
+          <a class="mc-p300__bottle" href="{{ prod.url }}">
+            <span class="mc-p300__photo">
+              {%- if prod.featured_image -%}
+                {{ prod.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', widths: '200, 320, 480, 600', sizes: '(min-width: 990px) 200px, 42vw', alt: '' }}
+              {%- endif -%}
+            </span>
+            <span class="mc-p300__name">{{ prod.title }}</span>
+            <span class="mc-p300__vendor">{{ prod.vendor }}</span>
+          </a>
+        {%- endfor -%}
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="section-background"></div>
+<div class="section section--page-width spacing-style mc-p300-wrap" style="{% render 'spacing-padding', settings: section.settings %}">
+  <mc-p300
+    class="mc-p300"
+    data-start="{{ inicio }}"
+    data-cart-add-url="{{ routes.cart_add_url }}"
+    data-cart-url="{{ routes.cart_url }}"
+  >
+    <div class="mc-p300__copy">
+      <h2 class="mc-p300__title">{{ section.settings.heading }}</h2>
+      <p class="mc-p300__lead">{{ section.settings.lead }}</p>
+
+      {%- if cuenta > 1 -%}
+        <fieldset class="mc-p300__qty" data-qty hidden>
+          <legend>{{ section.settings.question }}</legend>
+          <div class="mc-p300__options">
+            {%- for n in (1..3) -%}
+              {%- assign u = n | times: 2 -%}
+              {%- if n <= cuenta -%}
+                <label>
+                  <input type="radio" name="mc-p300-{{ section.id }}" value="{{ u }}"{% if u == inicio %} checked{% endif %}>
+                  <span><b>{{ u }}</b> perfumes</span>
+                </label>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endif -%}
+
+      <p class="mc-p300__note"><span data-note></span> {{ section.settings.note }}</p>
+
+      <div class="mc-p300__actions">
+        {%- if cuenta > 0 -%}
+          <button type="button" class="mc-btn mc-btn--dark" data-add hidden><span data-add-label>Añadir al carrito</span></button>
+        {%- endif -%}
+        <a class="mc-p300__link" href="{{ section.settings.link | default: '/pages/2x300' }}">{{ section.settings.link_label }}</a>
+      </div>
+      <p class="mc-p300__status" data-status role="status"></p>
+    </div>
+
+    {%- if cuenta > 0 -%}
+      <div class="mc-p300__stage">
+        <ul class="mc-p300__shelf" data-shelf data-n="{{ inicio | divided_by: 2 }}">{{ lista }}</ul>
+        <button type="button" class="mc-p300__swap" data-swap hidden>Ver otros perfumes</button>
+      </div>
+    {%- endif -%}
+  </mc-p300>
+</div>
+
+{% stylesheet %}
+  .mc-p300-section { background: #f4f0e8; }
+  .mc-p300-section .section-background { display: none; }
+  .mc-p300 { display: grid; gap: 2rem; color: #151515; }
+  .mc-p300__title { margin: 0 0 0 -0.04em; font-family: var(--font-heading--family); font-weight: 400; font-size: clamp(5.25rem, 27vw, 9rem); line-height: 0.95; letter-spacing: -0.045em; color: #151515; }
+  .mc-p300__lead { margin: 0.75rem 0 0; font-family: var(--font-heading--family); font-size: clamp(1.25rem, 5.2vw, 1.75rem); line-height: 1.3; }
+  .mc-p300__qty { margin: 1.75rem 0 0; padding: 0; border: 0; min-width: 0; }
+  .mc-p300__qty legend { margin-bottom: 0.75rem; padding: 0; font-weight: 600; font-size: 1rem; }
+  .mc-p300__options { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 30rem; border: 1px solid #151515; }
+  .mc-p300__options label { position: relative; display: block; cursor: pointer; }
+  .mc-p300__options label + label { border-left: 1px solid #151515; }
+  .mc-p300__options input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .mc-p300__options span { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1rem; min-height: 72px; padding: 0.5rem; font-size: 0.875rem; background: #fff; transition: background-color 0.2s ease, color 0.2s ease; }
+  .mc-p300__options b { font-family: var(--font-heading--family); font-weight: 400; font-size: 1.75rem; line-height: 1; }
+  .mc-p300__options input:checked + span { background: #151515; color: #fff; }
+  .mc-p300__options input:focus-visible + span { outline: 3px solid #c6a66b; outline-offset: 2px; }
+  .mc-p300__note { margin: 1.25rem 0 0; max-width: 34rem; line-height: 1.6; color: #4f4a43; }
+  .mc-p300__note span { color: #151515; font-weight: 600; }
+  .mc-p300__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 1.5rem; }
+  .mc-p300__actions .mc-btn[aria-busy='true'] { opacity: 0.7; cursor: progress; }
+  .mc-p300__link, .mc-p300__swap { display: inline-flex; align-items: center; min-height: 44px; padding: 0; font: inherit; font-size: 0.9375rem; font-weight: 600; color: #151515; text-decoration: underline; text-decoration-color: #c6a66b; text-decoration-thickness: 2px; text-underline-offset: 6px; background: none; border: 0; cursor: pointer; }
+  .mc-p300__link:hover, .mc-p300__swap:hover { text-decoration-color: #151515; }
+  .mc-p300__link:focus-visible, .mc-p300__swap:focus-visible, .mc-p300__bottle:focus-visible { outline: 2px solid #151515; outline-offset: 4px; }
+  .mc-p300__status { margin: 0.75rem 0 0; font-size: 0.9375rem; line-height: 1.5; }
+  .mc-p300__status:empty { display: none; }
+  .mc-p300__status a { color: inherit; font-weight: 600; }
+  .mc-p300__stage { min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; }
+  .mc-p300__shelf { --h: 38vw; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 0; }
+  .mc-p300__shelf[data-n='3'] { --h: 27vw; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mc-p300__pair { display: contents; }
+  .mc-p300__pair[hidden] { display: none; }
+  .mc-p300__bottle { min-width: 0; color: inherit; text-decoration: none; text-align: center; }
+  /* La línea champán es la repisa; "multiplicar" quita el fondo blanco de las fotos sobre el marfil. */
+  .mc-p300__photo { display: flex; align-items: flex-end; justify-content: center; height: var(--h); margin-bottom: 0.75rem; border-bottom: 2px solid #c6a66b; }
+  .mc-p300__photo img { display: block; width: 86%; height: 100%; object-fit: contain; object-position: bottom; mix-blend-mode: multiply; transition: transform 0.35s ease; transform-origin: bottom; }
+  .mc-p300__bottle:hover img { transform: scale(1.04); }
+  .mc-p300__name { display: block; padding: 0 0.25rem; font-family: var(--font-heading--family); font-size: 0.9375rem; line-height: 1.3; }
+  .mc-p300__vendor { display: block; margin-top: 0.15rem; font-size: 0.8125rem; color: #66615a; }
+  .mc-p300__swap { align-self: center; margin-top: 1rem; }
+  @media (min-width: 990px) {
+    .mc-p300 { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(2rem, 5vw, 5rem); align-items: end; }
+    .mc-p300__title { font-size: clamp(8rem, 12.4vw, 12rem); }
+    .mc-p300__shelf, .mc-p300__shelf[data-n='3'] { --h: clamp(150px, 15vw, 210px); }
+    .mc-p300__shelf[data-n='1'] { --h: clamp(320px, 30vw, 420px); }
+  }
+  @media (min-width: 600px) and (max-width: 989px) {
+    .mc-p300__shelf { --h: 24vw; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .mc-p300__shelf[data-n='1'] { --h: 36vw; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 599px) {
+    .mc-p300__shelf[data-n='3'] .mc-p300__name { font-size: 0.8125rem; }
+    .mc-p300__actions .mc-btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .mc-p300 * { transition: none !important; } }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('mc-p300')) {
+    customElements.define(
+      'mc-p300',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.pairs = Array.from(this.querySelectorAll('[data-pair]'));
+          if (!this.pairs.length || this.ready) return;
+          this.ready = true;
+          this.$ = (s) => this.querySelector(s);
+          this.offset = 0;
+          this.n = Math.max(1, Math.min(this.pairs.length, Math.round(Number(this.dataset.start || 2) / 2)));
+          const qty = this.$('[data-qty]');
+          if (qty) {
+            qty.hidden = false;
+            const r = qty.querySelector('input[value="' + this.n * 2 + '"]');
+            if (r) r.checked = true;
+          }
+          this.$('[data-add]').hidden = false;
+          this.addEventListener('change', (e) => {
+            if (!e.target.matches('[data-qty] input')) return;
+            this.n = Number(e.target.value) / 2;
+            this.offset = 0;
+            this.say('');
+            this.render();
+          });
+          this.addEventListener('click', (e) => {
+            if (e.target.closest('[data-add]')) return this.add();
+            if (e.target.closest('[data-swap]')) {
+              this.offset = (this.offset + this.n) % this.pairs.length;
+              this.say('');
+              this.render();
+            }
+          });
+          this.render();
+        }
+
+        current() {
+          return Array.from({ length: this.n }, (_, i) => this.pairs[(this.offset + i) % this.pairs.length]);
+        }
+
+        render() {
+          const on = this.current();
+          const shelf = this.$('[data-shelf]');
+          this.pairs.forEach((p) => { p.hidden = !on.includes(p); });
+          on.forEach((p) => shelf.appendChild(p));
+          shelf.dataset.n = this.n;
+          this.$('[data-add-label]').textContent = 'Añadir estos ' + this.n * 2 + ' al carrito';
+          this.$('[data-note]').textContent =
+            this.n === 1 ? '2 perfumes son una promoción.' : this.n * 2 + ' perfumes son ' + this.n + ' promociones en el mismo pedido.';
+          const swap = this.$('[data-swap]');
+          if (swap) swap.hidden = this.pairs.length <= this.n;
+        }
+
+        say(text, link) {
+          const s = this.$('[data-status]');
+          s.textContent = text;
+          if (!link) return;
+          const a = document.createElement('a');
+          a.href = link;
+          a.textContent = 'Ver carrito';
+          s.append(' ', a);
+        }
+
+        async add() {
+          const btn = this.$('[data-add]');
+          if (btn.getAttribute('aria-busy') === 'true') return;
+          const label = this.$('[data-add-label]');
+          const antes = label.textContent;
+          const ids = this.current().flatMap((p) => [Number(p.dataset.va), Number(p.dataset.vb)]);
+          const routes = typeof Theme !== 'undefined' && Theme && Theme.routes ? Theme.routes : null;
+          const addUrl = (routes && routes.cart_add_url) || this.dataset.cartAddUrl || '/cart/add';
+          const cartUrl = (routes && routes.cart_url) || this.dataset.cartUrl || '/cart';
+          const sections = Array.from(document.querySelectorAll('cart-items-component')).map((el) => el.dataset.sectionId).filter(Boolean);
+          btn.setAttribute('aria-busy', 'true');
+          label.textContent = 'Agregando…';
+          this.say('');
+          let Ev = null;
+          let deferred = null;
+          try {
+            Ev = (await import('@shopify/events')).CartLinesUpdateEvent;
+            deferred = Ev.createPromise();
+            this.dispatchEvent(new Ev({ action: 'add', context: 'product', lines: ids.map((id) => ({ merchandiseId: String(id), quantity: 1 })), promise: deferred.promise }));
+          } catch (e) {
+            deferred = null;
+          }
+          try {
+            const res = await fetch(addUrl, {
+              method: 'POST',
+              credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+              body: JSON.stringify({ items: ids.map((id) => ({ id, quantity: 1 })), sections: sections.join(',') }),
+            });
+            const data = await res.json();
+            if (!res.ok || data.status) throw new Error(data.description || data.message || 'No se pudo agregar');
+            const cart = await fetch(cartUrl + '.js', { credentials: 'same-origin', headers: { Accept: 'application/json' } }).then((r) => r.json());
+            if (deferred) deferred.resolve({ cart: Ev.createCartFromAjaxResponse(cart), detail: { items: cart.items, source: 'mc-p300', itemCount: ids.length, sections: data.sections, didError: false } });
+            else if (window.mc2x300 && window.mc2x300.revisar) window.mc2x300.revisar();
+            this.say('Listo, agregamos ' + ids.length + ' perfumes.', cartUrl);
+          } catch (e) {
+            if (deferred) deferred.reject(e);
+            this.say('No pudimos agregarlos. Revisa tu conexión e intenta otra vez.');
+          } finally {
+            btn.removeAttribute('aria-busy');
+            label.textContent = antes;
+          }
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MC · 2x300 portada",
+  "tag": "section",
+  "class": "mc-p300-section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "2x300" },
+    { "type": "text", "id": "lead", "label": "Frase principal", "default": "Elige 2 perfumes desde $300.000" },
+    { "type": "text", "id": "question", "label": "Pregunta de cantidad", "default": "¿Cuántos vas a llevar?" },
+    { "type": "text", "id": "note", "label": "Nota", "default": "El descuento se aplica solo en el carrito." },
+    { "type": "text", "id": "link_label", "label": "Texto del enlace", "default": "Prefiero elegirlos yo" },
+    { "type": "url", "id": "link", "label": "Enlace" },
+    { "type": "select", "id": "start", "label": "Cantidad que aparece elegida", "default": "4", "options": [ { "value": "2", "label": "2 perfumes" }, { "value": "4", "label": "4 perfumes" }, { "value": "6", "label": "6 perfumes" } ] },
+    { "type": "header", "content": "Espaciado" },
+    { "type": "range", "id": "padding-block-start", "label": "Arriba", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding-block-end", "label": "Abajo", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "pareja",
+      "name": "Pareja sugerida",
+      "settings": [
+        { "type": "product", "id": "product_1", "label": "Perfume 1" },
+        { "type": "product", "id": "product_2", "label": "Perfume 2" }
+      ]
+    }
+  ],
+  "max_blocks": 9,
+  "presets": [{ "name": "MC · 2x300 portada" }]
+}
+{% endschema %}

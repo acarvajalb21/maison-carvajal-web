@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "mc_2x300": {
+      "type": "mc-2x300",
+      "settings": {
+        "heading": "2x300",
+        "show_invitation": true,
+        "invitation": "Una invitación exclusiva para clientes de Maison Carvajal",
+        "padding-block-start": 48,
+        "padding-block-end": 64
+      }
+    }
+  },
+  "order": [
+    "mc_2x300"
+  ]
+}

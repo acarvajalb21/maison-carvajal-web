@@ -1,0 +1,245 @@
+{%- comment -%}
+  MAISON CARVAJAL · 2x300 automático.
+
+  Cada pareja tiene su código: DEMO-001 … DEMO-567. El script busca la combinación que más ahorra en todo el
+  carrito y pone solo esos códigos (Shopify acepta 5 por pedido). Con más de 5 parejas distintas prueba también los
+  códigos de grupo DEMO-NN, que cubren varias parejas cada uno.
+  - Carga en todas las páginas (se incluye desde mc-styles).
+  - Nunca toca los códigos que escriba el cliente.
+  - Aquí las parejas y los códigos son de EJEMPLO, armados solo con precios de venta públicos.
+  - Datos: "v" ids de variante; "p" [i, j, monto] en orden de código; "g" [número de grupo, [índices X], [índices Y]].
+{%- endcomment -%}
+<style>
+  .cart-discount__pill[data-discount-code^="DEMO-"] { display: none; }
+  /* El 2x300 resaltado en el menú (computador y celular). */
+  .menu-list__link[href$="/pages/2x300"] .menu-list__link-title { padding: 0.5em 0.95em; border-radius: 999px; background: #151515; color: #fff; font-weight: 600; transition: background-color 0.2s ease, color 0.2s ease; }
+  .menu-list__link[href$="/pages/2x300"]:hover .menu-list__link-title { background: #c6a66b; color: #151515; }
+  .menu-drawer__menu-item[href$="/pages/2x300"] .menu-drawer__menu-item-text { padding: 0.2em 0.6em; background: #151515; color: #fff; }
+</style>
+<script type="application/json" id="mc-2x300-reglas">{"v":[57658864205896,57658864173128,57658864238664,57633578188872,57633568849992,57633579008072,57633579270216,57633579302984,57633578483784,57633578975304,57633568882760,57633578582088,57633578942536,57633578156104,57633578287176,57633578319944,57633579630664,57633579335752,57633578418248,57633578451016,57633578614856,57633578221640,57633579663432,57633578254408,57633579696200,57633578549320,57633579728968,57633579106376,57633579565128,57633579139144,57633579204680,57633579597896,57633579368520,57633579401288,57633579434056,57633579499592,57633579466824],"p":[[0,10,4800],[0,11,4800],[0,12,4800],[0,13,9800],[0,14,9800],[0,15,9800],[0,16,9800],[0,17,9800],[0,18,19800],[0,19,19800],[0,20,19800],[0,21,24800],[0,22,39800],[0,23,39800],[0,24,49800],[0,25,49800],[0,26,49800],[0,27,9800],[0,28,14800],[0,29,19800],[0,30,34800],[0,31,34800],[0,32,4800],[0,33,4800],[0,34,4800],[0,35,4800],[0,36,9800],[1,10,4800],[1,11,4800],[1,12,4800],[1,13,9800],[1,14,9800],[1,15,9800],[1,16,9800],[1,17,9800],[1,18,19800],[1,19,19800],[1,20,19800],[1,21,24800],[1,22,39800],[1,23,39800],[1,24,49800],[1,25,49800],[1,26,49800],[1,27,9800],[1,28,14800],[1,29,19800],[1,30,34800],[1,31,34800],[1,32,4800],[1,33,4800],[1,34,4800],[1,35,4800],[1,36,9800],[2,10,4800],[2,11,4800],[2,12,4800],[2,13,9800],[2,14,9800],[2,15,9800],[2,16,9800],[2,17,9800],[2,18,19800],[2,19,19800],[2,20,19800],[2,21,24800],[2,22,39800],[2,23,39800],[2,24,49800],[2,25,49800],[2,26,49800],[2,27,9800],[2,28,14800],[2,29,19800],[2,30,34800],[2,31,34800],[2,32,4800],[2,33,4800],[2,34,4800],[2,35,4800],[2,36,9800],[3,4,4800],[3,5,9800],[3,6,9800],[3,7,9800],[3,8,9800],[3,9,9800],[3,10,14800],[3,11,14800],[3,12,14800],[3,13,19800],[3,14,19800],[3,15,19800],[3,16,19800],[3,17,19800],[3,18,29800],[3,19,29800],[3,20,29800],[3,21,34800],[3,22,49800],[3,23,49800],[3,24,9800],[3,25,9800],[3,26,9800],[3,27,19800],[3,28,24800],[3,29,29800],[3,30,44800],[3,31,44800],[3,32,14800],[3,33,14800],[3,34,14800],[3,35,14800],[3,36,19800],[4,5,14800],[4,6,14800],[4,7,14800],[4,8,14800],[4,9,14800],[4,10,19800],[4,11,19800],[4,12,19800],[4,13,24800],[4,14,24800],[4,15,24800],[4,16,24800],[4,17,24800],[4,18,34800],[4,19,34800],[4,20,34800],[4,21,39800],[4,22,4800],[4,23,4800],[4,24,14800],[4,25,14800],[4,26,14800],[4,27,24800],[4,28,29800],[4,29,34800],[4,30,49800],[4,31,49800],[4,32,19800],[4,33,19800],[4,34,19800],[4,35,19800],[4,36,24800],[5,6,19800],[5,7,19800],[5,8,19800],[5,9,19800],[5,10,24800],[5,11,24800],[5,12,24800],[5,13,29800],[5,14,29800],[5,15,29800],[5,16,29800],[5,17,29800],[5,18,39800],[5,19,39800],[5,20,39800],[5,21,44800],[5,22,9800],[5,23,9800],[5,24,19800],[5,25,19800],[5,26,19800],[5,27,29800],[5,28,34800],[5,29,39800],[5,30,4800],[5,31,4800],[5,32,24800],[5,33,24800],[5,34,24800],[5,35,24800],[5,36,29800],[6,7,19800],[6,8,19800],[6,9,19800],[6,10,24800],[6,11,24800],[6,12,24800],[6,13,29800],[6,14,29800],[6,15,29800],[6,16,29800],[6,17,29800],[6,18,39800],[6,19,39800],[6,20,39800],[6,21,44800],[6,22,9800],[6,23,9800],[6,24,19800],[6,25,19800],[6,26,19800],[6,27,29800],[6,28,34800],[6,29,39800],[6,30,4800],[6,31,4800],[6,32,24800],[6,33,24800],[6,34,24800],[6,35,24800],[6,36,29800],[7,8,19800],[7,9,19800],[7,10,24800],[7,11,24800],[7,12,24800],[7,13,29800],[7,14,29800],[7,15,29800],[7,16,29800],[7,17,29800],[7,18,39800],[7,19,39800],[7,20,39800],[7,21,44800],[7,22,9800],[7,23,9800],[7,24,19800],[7,25,19800],[7,26,19800],[7,27,29800],[7,28,34800],[7,29,39800],[7,30,4800],[7,31,4800],[7,32,24800],[7,33,24800],[7,34,24800],[7,35,24800],[7,36,29800],[8,9,19800],[8,10,24800],[8,11,24800],[8,12,24800],[8,13,29800],[8,14,29800],[8,15,29800],[8,16,29800],[8,17,29800],[8,18,39800],[8,19,39800],[8,20,39800],[8,21,44800],[8,22,9800],[8,23,9800],[8,24,19800],[8,25,19800],[8,26,19800],[8,27,29800],[8,28,34800],[8,29,39800],[8,30,4800],[8,31,4800],[8,32,24800],[8,33,24800],[8,34,24800],[8,35,24800],[8,36,29800],[9,10,24800],[9,11,24800],[9,12,24800],[9,13,29800],[9,14,29800],[9,15,29800],[9,16,29800],[9,17,29800],[9,18,39800],[9,19,39800],[9,20,39800],[9,21,44800],[9,22,9800],[9,23,9800],[9,24,19800],[9,25,19800],[9,26,19800],[9,27,29800],[9,28,34800],[9,29,39800],[9,30,4800],[9,31,4800],[9,32,24800],[9,33,24800],[9,34,24800],[9,35,24800],[9,36,29800],[10,11,29800],[10,12,29800],[10,13,34800],[10,14,34800],[10,15,34800],[10,16,34800],[10,17,34800],[10,18,44800],[10,19,44800],[10,20,44800],[10,21,49800],[10,22,14800],[10,23,14800],[10,24,24800],[10,25,24800],[10,26,24800],[10,27,34800],[10,28,39800],[10,29,44800],[10,30,9800],[10,31,9800],[10,32,29800],[10,33,29800],[10,34,29800],[10,35,29800],[10,36,34800],[11,12,29800],[11,13,34800],[11,14,34800],[11,15,34800],[11,16,34800],[11,17,34800],[11,18,44800],[11,19,44800],[11,20,44800],[11,21,49800],[11,22,14800],[11,23,14800],[11,24,24800],[11,25,24800],[11,26,24800],[11,27,34800],[11,28,39800],[11,29,44800],[11,30,9800],[11,31,9800],[11,32,29800],[11,33,29800],[11,34,29800],[11,35,29800],[11,36,34800],[12,13,34800],[12,14,34800],[12,15,34800],[12,16,34800],[12,17,34800],[12,18,44800],[12,19,44800],[12,20,44800],[12,21,49800],[12,22,14800],[12,23,14800],[12,24,24800],[12,25,24800],[12,26,24800],[12,27,34800],[12,28,39800],[12,29,44800],[12,30,9800],[12,31,9800],[12,32,29800],[12,33,29800],[12,34,29800],[12,35,29800],[12,36,34800],[13,14,39800],[13,15,39800],[13,16,39800],[13,17,39800],[13,18,49800],[13,19,49800],[13,20,49800],[13,21,4800],[13,22,19800],[13,23,19800],[13,24,29800],[13,25,29800],[13,26,29800],[13,27,39800],[13,28,44800],[13,29,49800],[13,30,14800],[13,31,14800],[13,32,34800],[13,33,34800],[13,34,34800],[13,35,34800],[13,36,39800],[14,15,39800],[14,16,39800],[14,17,39800],[14,18,49800],[14,19,49800],[14,20,49800],[14,21,4800],[14,22,19800],[14,23,19800],[14,24,29800],[14,25,29800],[14,26,29800],[14,27,39800],[14,28,44800],[14,29,49800],[14,30,14800],[14,31,14800],[14,32,34800],[14,33,34800],[14,34,34800],[14,35,34800],[14,36,39800],[15,16,39800],[15,17,39800],[15,18,49800],[15,19,49800],[15,20,49800],[15,21,4800],[15,22,19800],[15,23,19800],[15,24,29800],[15,25,29800],[15,26,29800],[15,27,39800],[15,28,44800],[15,29,49800],[15,30,14800],[15,31,14800],[15,32,34800],[15,33,34800],[15,34,34800],[15,35,34800],[15,36,39800],[16,17,39800],[16,18,49800],[16,19,49800],[16,20,49800],[16,21,4800],[16,22,19800],[16,23,19800],[16,24,29800],[16,25,29800],[16,26,29800],[16,27,39800],[16,28,44800],[16,29,49800],[16,30,14800],[16,31,14800],[16,32,34800],[16,33,34800],[16,34,34800],[16,35,34800],[16,36,39800],[17,18,49800],[17,19,49800],[17,20,49800],[17,21,4800],[17,22,19800],[17,23,19800],[17,24,29800],[17,25,29800],[17,26,29800],[17,27,39800],[17,28,44800],[17,29,49800],[17,30,14800],[17,31,14800],[17,32,34800],[17,33,34800],[17,34,34800],[17,35,34800],[17,36,39800],[18,19,9800],[18,20,9800],[18,21,14800],[18,22,29800],[18,23,29800],[18,24,39800],[18,25,39800],[18,26,39800],[18,27,49800],[18,28,4800],[18,29,9800],[18,30,24800],[18,31,24800],[18,32,44800],[18,33,44800],[18,34,44800],[18,35,44800],[18,36,49800],[19,20,9800],[19,21,14800],[19,22,29800],[19,23,29800],[19,24,39800],[19,25,39800],[19,26,39800],[19,27,49800],[19,28,4800],[19,29,9800],[19,30,24800],[19,31,24800],[19,32,44800],[19,33,44800],[19,34,44800],[19,35,44800],[19,36,49800],[20,21,14800],[20,22,29800],[20,23,29800],[20,24,39800],[20,25,39800],[20,26,39800],[20,27,49800],[20,28,4800],[20,29,9800],[20,30,24800],[20,31,24800],[20,32,44800],[20,33,44800],[20,34,44800],[20,35,44800],[20,36,49800],[21,22,34800],[21,23,34800],[21,24,44800],[21,25,44800],[21,26,44800],[21,27,4800],[21,28,9800],[21,29,14800],[21,30,29800],[21,31,29800],[21,32,49800],[21,33,49800],[21,34,49800],[21,35,49800],[22,23,49800],[22,24,9800],[22,25,9800],[22,26,9800],[22,27,19800],[22,28,24800],[22,29,29800],[22,30,44800],[22,31,44800],[23,24,9800],[23,25,9800],[23,26,9800],[23,27,19800],[23,28,24800],[23,29,29800],[23,30,44800],[23,31,44800],[24,25,19800],[24,26,19800],[24,27,29800],[24,28,34800],[24,29,39800],[25,26,19800],[25,27,29800],[25,28,34800],[25,29,39800],[26,27,29800],[26,28,34800],[26,29,39800],[27,28,44800],[27,29,49800]],"g":[[1,[0,1,2],[10,11,12]],[2,[0,1,2],[13,14,15,16,17]],[3,[0,1,2],[18,19,20]],[4,[0,1,2],[21]],[5,[0,1,2],[22,23]],[6,[0,1,2],[24,25,26]],[7,[0,1,2],[27]],[8,[0,1,2],[28]],[9,[0,1,2],[29]],[10,[0,1,2],[30,31]],[11,[0,1,2],[32,33,34,35]],[12,[0,1,2],[36]],[13,[3],[5,6,7,8,9]],[14,[3],[10,11,12]],[15,[3],[13,14,15,16,17]],[16,[3],[18,19,20]],[17,[3],[24,25,26]],[18,[3],[32,33,34,35]],[19,[4],[5,6,7,8,9]],[20,[4],[10,11,12]],[21,[4],[13,14,15,16,17]],[22,[4],[18,19,20]],[23,[4],[24,25,26]],[24,[4],[32,33,34,35]],[25,[5,6,7,8],[6,7,8,9]],[26,[5,6,7,8,9],[10,11,12]],[27,[5,6,7,8,9],[13,14,15,16,17]],[28,[5,6,7,8,9],[18,19,20]],[29,[5,6,7,8,9],[21]],[30,[5,6,7,8,9],[22,23]],[31,[5,6,7,8,9],[24,25,26]],[32,[5,6,7,8,9],[27]],[33,[5,6,7,8,9],[28]],[34,[5,6,7,8,9],[29]],[35,[5,6,7,8,9],[30,31]],[36,[5,6,7,8,9],[32,33,34,35]],[37,[5,6,7,8,9],[36]],[38,[10,11],[11,12]],[39,[10,11,12],[13,14,15,16,17]],[40,[10,11,12],[18,19,20]],[41,[10,11,12],[21]],[42,[10,11,12],[22,23]],[43,[10,11,12],[24,25,26]],[44,[10,11,12],[27]],[45,[10,11,12],[28]],[46,[10,11,12],[29]],[47,[10,11,12],[30,31]],[48,[10,11,12],[32,33,34,35]],[49,[10,11,12],[36]],[50,[13,14,15,16],[14,15,16,17]],[51,[13,14,15,16,17],[18,19,20]],[52,[13,14,15,16,17],[21]],[53,[13,14,15,16,17],[22,23]],[54,[13,14,15,16,17],[24,25,26]],[55,[13,14,15,16,17],[27]],[56,[13,14,15,16,17],[28]],[57,[13,14,15,16,17],[29]],[58,[13,14,15,16,17],[30,31]],[59,[13,14,15,16,17],[32,33,34,35]],[60,[13,14,15,16,17],[36]],[61,[18,19],[19,20]],[62,[18,19,20],[21]],[63,[18,19,20],[22,23]],[64,[18,19,20],[24,25,26]],[65,[18,19,20],[27]],[66,[18,19,20],[28]],[67,[18,19,20],[29]],[68,[18,19,20],[30,31]],[69,[18,19,20],[32,33,34,35]],[70,[18,19,20],[36]],[71,[21],[24,25,26]],[72,[21],[32,33,34,35]],[73,[22,23],[24,25,26]],[74,[22,23],[30,31]],[75,[24,25],[25,26]],[76,[24,25,26],[27]],[77,[24,25,26],[28]],[78,[24,25,26],[29]]]}</script>
+<script type="module">
+  if (!window.mc2x300) {
+    window.mc2x300 = {};
+    const raiz = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+    const datos = JSON.parse(document.getElementById('mc-2x300-reglas').textContent);
+    const PREFIJO = 'DEMO-';
+    const MAX_CODIGOS = 5;
+    const MAX_EXACTO = 14;
+    const MAX_INTENTOS = 6;
+    const PRECIOS = [30000000, 35000000, 40000000];
+    const indice = new Map(datos.v.map((id, i) => [id, i]));
+    const clave = (i, j) => Math.min(i, j) + '-' + Math.max(i, j);
+    const pareja = new Map(datos.p.map(([i, j, monto], n) => [
+      clave(i, j),
+      { k: clave(i, j), monto: monto * 100, codigo: PREFIJO + String(n + 1).padStart(3, '0') }
+    ]));
+    const grupos = datos.g.map(([n, xs, ys]) => ({
+      codigo: PREFIJO + String(n).padStart(2, '0'),
+      claves: new Set(xs.flatMap((x) => ys.map((y) => clave(x, y))))
+    }));
+    const esPropio = (c) => c.toUpperCase().startsWith(PREFIJO);
+    const mismas = (a, b) => a.length === b.length && a.every((c) => b.includes(c));
+    const ahorro = (c) => c.original_total_price - c.total_price;
+
+    // Pareja válida hoy: si un precio cambió y la resta ya no da un precio de la promoción, no se usa.
+    let vetadas = [];
+    const valida = (a, b) => {
+      const p = pareja.get(clave(a.i, b.i));
+      return p && !vetadas.includes(p.codigo) && PRECIOS.includes(a.precio + b.precio - p.monto) ? p : null;
+    };
+
+    // Emparejamiento exacto de mayor ahorro para pocas unidades.
+    const exacto = (u) => {
+      const memo = new Map();
+      const mejor = (libres) => {
+        if (!libres) return { total: 0, usadas: [] };
+        if (memo.has(libres)) return memo.get(libres);
+        const i = 31 - Math.clz32(libres & -libres);
+        const resto = libres & ~(1 << i);
+        let res = mejor(resto);
+        for (let j = i + 1; j < u.length; j++) {
+          if (!(resto & (1 << j))) continue;
+          const p = valida(u[i], u[j]);
+          if (!p) continue;
+          const sub = mejor(resto & ~(1 << j));
+          if (sub.total + p.monto > res.total) res = { total: sub.total + p.monto, usadas: [{ p, u: [u[i], u[j]] }, ...sub.usadas] };
+        }
+        memo.set(libres, res);
+        return res;
+      };
+      return mejor(2 ** u.length - 1);
+    };
+
+    // Carritos grandes: se arranca por mayor ahorro y se mejora de a dos grupos hasta que no haya ganancia.
+    const emparejar = (u) => {
+      if (u.length <= MAX_EXACTO) return exacto(u).usadas;
+      let partes = u.map((x) => ({ total: 0, u: [x], usadas: [] }));
+      for (let v = 0; v < 60; v++) {
+        let top = null;
+        for (let a = 0; a < partes.length; a++) {
+          for (let b = a + 1; b < partes.length; b++) {
+            const un = [...partes[a].u, ...partes[b].u];
+            const r = exacto(un);
+            const gana = r.total - partes[a].total - partes[b].total;
+            if (gana > 0 && (!top || gana > top.gana)) top = { a, b, r, un, gana };
+          }
+        }
+        if (!top) break;
+        const en = new Set(top.r.usadas.flatMap((x) => x.u));
+        partes = partes.filter((_, n) => n !== top.a && n !== top.b);
+        for (const x of top.r.usadas) partes.push({ total: x.p.monto, u: x.u, usadas: [x] });
+        for (const x of top.un) if (!en.has(x)) partes.push({ total: 0, u: [x], usadas: [] });
+      }
+      return partes.flatMap((x) => x.usadas);
+    };
+
+    // Devuelve el mayor ahorro posible y las listas de códigos que conviene probar, en orden.
+    const planear = (cart, ajenos, sin = []) => {
+      vetadas = sin;
+      const u = [];
+      for (const it of cart.items) {
+        const i = indice.get(it.variant_id);
+        if (i !== undefined) for (let n = 0; n < it.quantity && u.length < 40; n++) u.push({ i, precio: it.original_price });
+      }
+      const cupo = Math.max(0, MAX_CODIGOS - ajenos.length);
+      const usadas = u.length > 1 ? emparejar(u).map((x) => x.p) : [];
+      const esperado = usadas.reduce((s, p) => s + p.monto, 0);
+      const porCodigo = new Map();
+      for (const p of usadas) porCodigo.set(p.codigo, (porCodigo.get(p.codigo) || 0) + p.monto);
+      const sueltos = [...porCodigo].sort((a, b) => b[1] - a[1]).map(([c]) => c);
+      const veces = new Map([...porCodigo].map(([c, total]) => [c, total / usadas.find((p) => p.codigo === c).monto]));
+      if (sueltos.length <= cupo) return { esperado, veces, opciones: [sueltos] };
+      let faltan = [...usadas];
+      const elegidos = [];
+      while (faltan.length && elegidos.length < cupo) {
+        let top = { gana: 0 };
+        for (const g of grupos) {
+          const cubre = faltan.filter((p) => g.claves.has(p.k));
+          const gana = cubre.reduce((s, p) => s + p.monto, 0);
+          if (gana > top.gana) top = { gana, cubre, codigo: cubre.every((p) => p.k === cubre[0].k) ? cubre[0].codigo : g.codigo };
+        }
+        if (!top.codigo) break;
+        elegidos.push(top.codigo);
+        faltan = faltan.filter((p) => !top.cubre.includes(p));
+      }
+      return { esperado, veces, opciones: [elegidos, sueltos.slice(0, cupo)] };
+    };
+
+    // Con perfumes repetidos, Shopify puede usar un código más veces de lo planeado y dejar otra pareja sin perfume.
+    // Propone planes alternos: sin los códigos que no entraron y sin los que se usaron de más.
+    const alternos = (c, ajenos, plan) => {
+      const dado = new Map();
+      for (const it of c.items) {
+        for (const d of it.line_level_discount_allocations || []) {
+          const t = d.discount_application.title;
+          dado.set(t, (dado.get(t) || 0) + d.amount);
+        }
+      }
+      const fuera = (c.discount_codes || []).filter((d) => esPropio(d.code) && !d.applicable).map((d) => d.code);
+      const demas = [...plan.veces].filter(([k, n]) => {
+        const p = [...pareja.values()].find((x) => x.codigo === k);
+        return (dado.get(k) || 0) > p.monto * n;
+      }).map(([k]) => k);
+      return [fuera, demas, ...fuera.map((k) => [k])].filter((l) => l.length).map((l) => planear(c, ajenos, l));
+    };
+
+    const leer = async () => (await fetch(raiz + 'cart.js', { headers: { Accept: 'application/json' }, cache: 'no-store' })).json();
+    const poner = async (codigos) => {
+      const r = await fetch(raiz + 'cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ discount: codigos.join(',') })
+      });
+      if (!r.ok) throw new Error('cart/update ' + r.status);
+      return r.json();
+    };
+
+    const avisar = async (cart) => {
+      try {
+        const { CartDiscountUpdateEvent: E } = await import('@shopify/events');
+        const d = E.createPromise();
+        const ev = new E({ discountCodes: (cart.discount_codes || []).map(({ code }) => ({ code })), promise: d.promise });
+        ev.mc2x300 = true;
+        document.dispatchEvent(ev);
+        d.resolve({ cart: E.createCartFromAjaxResponse(cart) });
+      } catch (e) {
+        if (document.querySelector('cart-items-component')) location.reload();
+      }
+    };
+
+    let ultima = null;
+    const revisar = async () => {
+      const cart = await leer();
+      const actuales = (cart.discount_codes || []).map((d) => d.code);
+      const ajenos = actuales.filter((c) => !esPropio(c));
+      const propios = actuales.filter(esPropio);
+      const firma = JSON.stringify([ajenos, cart.items.map((i) => [i.variant_id, i.quantity, i.original_price])]);
+      if (ultima && ultima.firma === firma && mismas(propios, ultima.propios)) return;
+      const plan = planear(cart, ajenos);
+      const { esperado, opciones } = plan;
+      const sobran = (cart.discount_codes || []).some((d) => esPropio(d.code) && !d.applicable);
+      const listo = ajenos.length ? mismas(opciones[0], propios) : ahorro(cart) >= esperado;
+      let final = propios;
+      if (sobran || !listo) {
+        let mejor = null;
+        let puestos = propios;
+        const vistos = new Set();
+        const cola = opciones.map((codigos) => ({ codigos, plan }));
+        while (cola.length && vistos.size < MAX_INTENTOS) {
+          const { codigos, plan: pl } = cola.shift();
+          const id = [...codigos].sort().join();
+          if (vistos.has(id)) continue;
+          vistos.add(id);
+          const c = await poner([...ajenos, ...codigos]);
+          puestos = codigos;
+          if (!mejor || c.total_price < mejor.c.total_price) mejor = { c, codigos };
+          if (ajenos.length || ahorro(c) >= esperado) break;
+          for (const alt of alternos(c, ajenos, pl)) cola.push({ codigos: alt.opciones[0], plan: alt });
+        }
+        // Los códigos que Shopify no usó se quitan: al cliente le conviene más lo que ya quedó aplicado.
+        final = (mejor.c.discount_codes || []).filter((d) => esPropio(d.code) && d.applicable).map((d) => d.code);
+        if (!mismas(final, puestos)) mejor.c = await poner([...ajenos, ...final]);
+        await avisar(mejor.c);
+      }
+      ultima = { firma, propios: final };
+    };
+
+    // Una revisión a la vez; si el carrito cambia mientras tanto, se revisa otra vez al terminar.
+    let enCurso = null;
+    let pendiente = false;
+    const pedir = () => {
+      pendiente = true;
+      if (!enCurso) {
+        enCurso = (async () => {
+          let vueltas = 0;
+          while (pendiente && vueltas++ < 5) {
+            pendiente = false;
+            try { await revisar(); } catch (e) { console.warn('[2x300]', e); }
+          }
+        })().finally(() => { enCurso = null; });
+      }
+      return enCurso;
+    };
+    window.mc2x300.revisar = pedir;
+
+    const alCambiar = (ev) => {
+      if (ev.mc2x300) return;
+      Promise.resolve(ev.promise).then(pedir, () => {});
+    };
+    document.addEventListener('shopify:cart:lines-update', alCambiar);
+    document.addEventListener('shopify:cart:discount-update', alCambiar);
+    window.addEventListener('pageshow', (ev) => {
+      if (ev.persisted) { ultima = null; pedir(); }
+    });
+    {% if cart.item_count > 1 %}pedir();{% endif %}
+
+    // Si el cliente pulsa "Pagar" mientras se revisa el carrito, se espera a que termine (máximo 4 s).
+    document.addEventListener('click', (ev) => {
+      const b = enCurso && ev.target.closest && ev.target.closest('[name="checkout"], a[href*="/checkout"]');
+      if (!b) return;
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      Promise.race([enCurso, new Promise((r) => setTimeout(r, 4000))]).then(() => { location.href = raiz + 'checkout'; });
+    }, true);
+  }
+</script>

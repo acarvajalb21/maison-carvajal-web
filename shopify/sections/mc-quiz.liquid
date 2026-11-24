@@ -1,0 +1,272 @@
+{%- comment -%}
+  MAISON CARVAJAL - "Encuentra tu perfume en 3 pasos".
+  Test interactivo: para quién, perfil de aroma y presupuesto. Sugiere perfumes del catálogo
+  (bloques editables: producto + perfil) y abre WhatsApp con las respuestas.
+  El perfil de cada perfume es orientativo, según las notas que publica cada casa.
+{%- endcomment -%}
+
+<div class="section-background"></div>
+<div
+  class="section section--page-width spacing-style mc-quiz"
+  style="{% render 'spacing-padding', settings: section.settings %}"
+>
+  <mc-quiz class="mc-quiz__box" data-wa="57XXXXXXXXXX">
+    <div class="mc-quiz__intro">
+      <p class="mc-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2 class="mc-quiz__title">{{ section.settings.heading }}</h2>
+      <span class="mc-rule" aria-hidden="true"></span>
+      {%- if section.settings.text != blank -%}
+        <p class="mc-quiz__lead">{{ section.settings.text }}</p>
+      {%- endif -%}
+      <div class="mc-quiz__progress" aria-hidden="true"><span data-progress></span></div>
+      <p class="mc-quiz__step-label" data-step-label>Paso 1 de 3</p>
+    </div>
+
+    <div class="mc-quiz__stage">
+      <fieldset class="mc-q" data-step="1">
+        <legend class="mc-q__legend">¿Para quién es el perfume?</legend>
+        <div class="mc-choices mc-choices--2">
+          <label class="mc-choice"><input type="radio" name="mc-para-{{ section.id }}" value="para mí"><span class="mc-choice__title">Para mí</span><span class="mc-choice__hint">Quiero encontrar mi próximo perfume</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-para-{{ section.id }}" value="para regalar"><span class="mc-choice__title">Para regalar</span><span class="mc-choice__hint">Busco un detalle que acierte</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mc-q" data-step="2" hidden>
+        <legend class="mc-q__legend">¿Qué aromas te atraen más?</legend>
+        <div class="mc-choices">
+          <label class="mc-choice"><input type="radio" name="mc-perfil-{{ section.id }}" value="dulce" data-label="dulces y cálidos"><span class="mc-choice__title">Dulce y cálido</span><span class="mc-choice__hint">Vainilla, café, pistacho, especias</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-perfil-{{ section.id }}" value="fresco" data-label="frescos y limpios"><span class="mc-choice__title">Fresco y limpio</span><span class="mc-choice__hint">Cítricos, notas marinas, frutas</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-perfil-{{ section.id }}" value="amaderado" data-label="amaderados e intensos"><span class="mc-choice__title">Amaderado e intenso</span><span class="mc-choice__hint">Maderas, cuero, oud, ámbar</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-perfil-{{ section.id }}" value="floral" data-label="florales"><span class="mc-choice__title">Floral</span><span class="mc-choice__hint">Rosa, jazmín, flores blancas</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="mc-q" data-step="3" hidden>
+        <legend class="mc-q__legend">¿Cuál es tu presupuesto?</legend>
+        <div class="mc-choices">
+          <label class="mc-choice"><input type="radio" name="mc-pres-{{ section.id }}" value="0-250000" data-label="hasta $250.000"><span class="mc-choice__title">Hasta $250.000</span><span class="mc-choice__hint">Árabes con mucha presencia</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-pres-{{ section.id }}" value="250000-700000" data-label="entre $250.000 y $700.000"><span class="mc-choice__title">$250.000 – $700.000</span><span class="mc-choice__hint">Diseñador y árabes premium</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-pres-{{ section.id }}" value="700000-999999999" data-label="más de $700.000"><span class="mc-choice__title">Más de $700.000</span><span class="mc-choice__hint">Nicho y grandes casas</span></label>
+          <label class="mc-choice"><input type="radio" name="mc-pres-{{ section.id }}" value="0-999999999" data-label="sin un límite definido"><span class="mc-choice__title">Sin límite</span><span class="mc-choice__hint">Muéstrame lo mejor</span></label>
+        </div>
+      </fieldset>
+
+      <div class="mc-quiz__result" data-result hidden tabindex="-1">
+        <p class="mc-eyebrow">Tus sugerencias</p>
+        <h3 class="mc-quiz__result-title" data-result-title></h3>
+        <p class="mc-quiz__note" data-result-note></p>
+        <div class="mc-rail mc-rail--quiz" data-results></div>
+        <div class="mc-quiz__actions">
+          <a class="mc-btn mc-btn--dark" data-wa-link href="https://wa.me/57XXXXXXXXXX" target="_blank" rel="noopener">
+            Confirmar con un asesor por WhatsApp
+            <span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+          </a>
+          <button type="button" class="mc-quiz__link" data-restart>Volver a empezar</button>
+        </div>
+      </div>
+
+      <div class="mc-quiz__nav">
+        <button type="button" class="mc-quiz__link" data-back hidden>&larr; Atrás</button>
+        <button type="button" class="mc-btn mc-btn--dark" data-next hidden>Continuar &rarr;</button>
+      </div>
+    </div>
+
+    <template data-pool>
+      {%- for block in section.blocks -%}
+        {%- assign p = block.settings.product -%}
+        {%- if p != blank -%}
+          <div
+            class="mc-pool-item"
+            data-profile="{{ block.settings.profile }}"
+            data-price="{{ p.price | divided_by: 100 }}"
+            data-title="{{ p.vendor | escape }} {{ p.title | escape }}"
+          >
+            {% render 'mc-card', product: p %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </template>
+  </mc-quiz>
+
+  {%- if section.settings.footnote != blank -%}
+    <p class="mc-source">{{ section.settings.footnote }}</p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .mc-quiz [hidden] { display: none !important; }
+  .mc-quiz__box { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; padding: clamp(1.5rem, 5vw, 3.5rem); background: #f4f0e8; border-radius: 14px; }
+  @media (min-width: 990px) { .mc-quiz__box { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: 3.5rem; align-items: start; } }
+  .mc-quiz__intro { display: flex; flex-direction: column; gap: 0.85rem; }
+  .mc-quiz__title { margin: 0; font-family: var(--font-heading--family); font-weight: 400; font-size: clamp(1.75rem, 5vw, 2.5rem); line-height: 1.15; }
+  .mc-quiz__lead { margin: 0; color: #66615a; line-height: 1.65; }
+  .mc-quiz__progress { height: 2px; background: #e5ded0; border-radius: 2px; overflow: hidden; margin-top: 0.5rem; }
+  .mc-quiz__progress span { display: block; height: 100%; width: 33.33%; background: #151515; transition: width 0.4s ease; }
+  .mc-quiz__step-label { margin: 0; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #66615a; }
+  .mc-quiz__stage { min-height: 280px; }
+  .mc-q { margin: 0; padding: 0; border: 0; min-width: 0; animation: mc-panel-in 0.4s ease both; }
+  .mc-q__legend { margin-bottom: 1.25rem; padding: 0; font-family: var(--font-heading--family); font-size: clamp(1.35rem, 3.6vw, 1.75rem); }
+  .mc-choices { display: grid; gap: 0.75rem; grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .mc-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .mc-choice { position: relative; display: flex; flex-direction: column; gap: 0.25rem; padding: 1.1rem 1.25rem; background: #fff; border: 1px solid #e5ded0; border-radius: 10px; cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+  .mc-choice:hover { border-color: #151515; transform: translateY(-2px); box-shadow: 0 10px 24px rgba(21, 21, 21, 0.08); }
+  .mc-choice input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .mc-choice:has(input:focus-visible) { outline: 2px solid #c6a66b; outline-offset: 3px; }
+  .mc-choice:has(input:checked) { background: #151515; color: #fff; border-color: #151515; }
+  .mc-choice__title { font-family: var(--font-heading--family); font-size: 1.125rem; }
+  .mc-choice__hint { font-size: 0.875rem; color: #66615a; }
+  .mc-choice:has(input:checked) .mc-choice__hint { color: rgba(255, 255, 255, 0.75); }
+  .mc-quiz__result { animation: mc-panel-in 0.45s ease both; outline: none; }
+  .mc-quiz__result-title { margin: 0.5rem 0; font-family: var(--font-heading--family); font-weight: 400; font-size: clamp(1.35rem, 3.6vw, 1.75rem); }
+  .mc-quiz__note { margin: 0 0 1.25rem; color: #66615a; line-height: 1.6; }
+  .mc-rail--quiz { position: relative; margin-bottom: 1.5rem; }
+  @media (min-width: 990px) { .mc-rail--quiz { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .mc-quiz__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+  .mc-quiz__nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.25rem; }
+  .mc-quiz__nav [data-next] { margin-left: auto; }
+  .mc-quiz__link { padding: 0.5rem 0; min-height: 44px; background: none; border: 0; border-bottom: 1px solid #c6a66b; font: inherit; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #151515; cursor: pointer; }
+  .mc-quiz__link:focus-visible { outline: 2px solid #c6a66b; outline-offset: 3px; }
+  @keyframes mc-panel-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .mc-q, .mc-quiz__result { animation: none; }
+    .mc-choice, .mc-quiz__progress span { transition: none; }
+    .mc-choice:hover { transform: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  if (!customElements.get('mc-quiz')) {
+    customElements.define(
+      'mc-quiz',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.steps = Array.from(this.querySelectorAll('.mc-q'));
+          this.result = this.querySelector('[data-result]');
+          this.back = this.querySelector('[data-back]');
+          this.current = 0;
+          this.next = this.querySelector('[data-next]');
+          this.steps.forEach((step, i) => {
+            step.addEventListener('change', () => this.updateNav());
+            step.addEventListener('click', (e) => {
+              const input = e.target.closest('input');
+              if (!input) return;
+              this.updateNav();
+              // Con mouse o toque avanza solo; con teclado se usa el botón Continuar.
+              if (e.detail > 0) setTimeout(() => this.show(i + 1), 220);
+            });
+          });
+          this.back.addEventListener('click', () => this.show(Math.max(0, this.current - 1), true));
+          this.next.addEventListener('click', () => this.show(this.current + 1, true));
+          this.querySelector('[data-restart]').addEventListener('click', () => {
+            this.querySelectorAll('input[type="radio"]').forEach((r) => (r.checked = false));
+            this.show(0, true);
+          });
+          this.show(0);
+        }
+        updateNav() {
+          const step = this.steps[this.current];
+          this.next.hidden = !step || !step.querySelector('input:checked');
+        }
+        value(step) {
+          const input = this.steps[step].querySelector('input:checked');
+          return input ? { value: input.value, label: input.dataset.label || input.value } : null;
+        }
+        show(i, focus) {
+          this.current = i;
+          const done = i >= this.steps.length;
+          this.steps.forEach((s, n) => (s.hidden = n !== i));
+          this.result.hidden = !done;
+          this.back.hidden = i === 0 || done;
+          this.updateNav();
+          const total = this.steps.length;
+          this.querySelector('[data-progress]').style.width = `${(Math.min(i + 1, total) / total) * 100}%`;
+          this.querySelector('[data-step-label]').textContent = done ? 'Listo' : `Paso ${i + 1} de ${total}`;
+          if (done) {
+            this.renderResult();
+            this.result.focus({ preventScroll: true });
+          } else if (focus) {
+            const first = this.steps[i].querySelector('input');
+            if (first) first.focus();
+          }
+        }
+        renderResult() {
+          const para = this.value(0);
+          const perfil = this.value(1);
+          const pres = this.value(2);
+          if (!para || !perfil || !pres) return this.show(0);
+          const [min, max] = pres.value.split('-').map(Number);
+          const tpl = this.querySelector('template[data-pool]');
+          const pool = Array.from(tpl.content.querySelectorAll('.mc-pool-item'));
+          const sameProfile = pool.filter((el) => el.dataset.profile === perfil.value);
+          let matches = sameProfile.filter((el) => {
+            const p = Number(el.dataset.price);
+            return p > 0 && p >= min && p <= max;
+          });
+          let exact = true;
+          if (!matches.length) {
+            exact = false;
+            const target = max > 900000000 ? min : (min + max) / 2;
+            matches = sameProfile
+              .slice()
+              .sort((a, b) => Math.abs(Number(a.dataset.price) - target) - Math.abs(Number(b.dataset.price) - target));
+          }
+          matches = matches.slice(0, 4);
+          const wrap = this.querySelector('[data-results]');
+          wrap.innerHTML = '';
+          matches.forEach((el) => wrap.appendChild(el.firstElementChild.cloneNode(true)));
+          this.querySelector('[data-result-title]').textContent = `Aromas ${perfil.label}, ${pres.label}`;
+          this.querySelector('[data-result-note]').textContent = exact
+            ? 'Estas referencias del catálogo encajan con lo que buscas. Escríbenos para confirmar precio, presentación y disponibilidad.'
+            : 'No encontramos opciones de ese perfil en ese rango; estas son las más cercanas. Escríbenos y te ayudamos a encontrar una alternativa.';
+          const names = matches.map((el) => el.dataset.title).join(', ');
+          const msg =
+            `Hola, hice el test de la web. Busco un perfume ${para.value}, me gustan los aromas ${perfil.label} ` +
+            `y mi presupuesto es ${pres.label}.` +
+            (names ? ` Me salieron: ${names}.` : '') +
+            ' ¿Qué me recomiendas?';
+          this.querySelector('[data-wa-link]').href = `https://wa.me/${this.dataset.wa}?text=${encodeURIComponent(msg)}`;
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "MC · Test de perfume",
+  "tag": "section",
+  "class": "mc-quiz-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Antetítulo", "default": "Asesoría rápida" },
+    { "type": "text", "id": "heading", "label": "Título", "default": "Encuentra tu perfume en 3 pasos" },
+    { "type": "textarea", "id": "text", "label": "Texto", "default": "Responde tres preguntas y te mostramos opciones de nuestro catálogo. Después las afinamos contigo por WhatsApp." },
+    { "type": "textarea", "id": "footnote", "label": "Nota al pie" },
+    { "type": "header", "content": "Espaciado" },
+    { "type": "range", "id": "padding-block-start", "label": "Arriba", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding-block-end", "label": "Abajo", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "perfume",
+      "name": "Perfume",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Perfume" },
+        {
+          "type": "select",
+          "id": "profile",
+          "label": "Perfil de aroma",
+          "options": [
+            { "value": "dulce", "label": "Dulce y cálido" },
+            { "value": "fresco", "label": "Fresco y limpio" },
+            { "value": "amaderado", "label": "Amaderado e intenso" },
+            { "value": "floral", "label": "Floral" }
+          ],
+          "default": "dulce"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 50,
+  "presets": [{ "name": "MC · Test de perfume" }]
+}
+{% endschema %}

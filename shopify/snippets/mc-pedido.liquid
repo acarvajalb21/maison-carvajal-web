@@ -1,0 +1,33 @@
+{%- doc -%}
+  MAISON CARVAJAL - bloque de compra de la ficha según el modo de venta (ver mc-modo-venta).
+  Reemplaza al antiguo bloque "consultar-precio" (custom liquid mc_consult de templates/product.json).
+  - pedido: oculta carrito y pago, y muestra "Pedir por WhatsApp" con el mensaje estructurado.
+  - consultar: oculta carrito y pago, y pide cotización.
+  - directa: no muestra nada (quedan los botones de compra del tema).
+
+  @param {product} product
+{%- enddoc -%}
+{%- capture modo -%}{% render 'mc-modo-venta', product: product %}{%- endcapture -%}
+{%- assign modo = modo | strip -%}
+{%- if modo == 'pedido' -%}
+  {%- capture wa_msg -%}{% render 'mc-pedido-msg', product: product %}{%- endcapture -%}
+  <div class="mc-pedido">
+    <p class="mc-pedido__title">Este perfume se pide por WhatsApp</p>
+    <p class="mc-pedido__text">Te confirmamos disponibilidad, precio final y tiempo de entrega. Pagas solo cuando todo esté confirmado.</p>
+    <a
+      class="mc-btn mc-btn--dark mc-btn--block"
+      href="https://wa.me/57XXXXXXXXXX?text={{ wa_msg | strip | url_encode }}"
+      target="_blank"
+      rel="noopener"
+    >
+      Pedir por WhatsApp<span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+    </a>
+  </div>
+  <style>body:has(.mc-pedido) .buy-buttons-block { display: none; }</style>
+{%- elsif modo == 'consultar' -%}
+  <div class="mc-pedido">
+    <p class="mc-pedido__text">Precio por confirmar. Escríbenos y te enviamos la cotización.</p>
+    {% render 'mc-whatsapp', product: product, class: 'mc-btn--dark mc-btn--block', label: 'Consultar precio por WhatsApp' %}
+  </div>
+  <style>body:has(.mc-pedido) .buy-buttons-block { display: none; }</style>
+{%- endif -%}

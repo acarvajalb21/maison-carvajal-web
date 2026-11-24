@@ -1,0 +1,29 @@
+{%- doc -%}
+  MAISON CARVAJAL - texto del mensaje de pedido por WhatsApp (sin codificar).
+  Referencia = casa + nombre del perfume (la tienda no usa SKU). Lleva presentación si existe,
+  colección, precio de la web y enlace a la ficha.
+  Uso: {% capture msg %}{% render 'mc-pedido-msg', product: product %}{% endcapture %}
+       y luego {{ msg | strip | url_encode }} en el enlace wa.me.
+
+  @param {product} product
+{%- enddoc -%}
+{%- liquid
+  assign coleccion = ''
+  if product.tags contains 'coleccion-nicho'
+    assign coleccion = 'Nicho'
+  elsif product.tags contains 'coleccion-disenador'
+    assign coleccion = 'Diseñador'
+  elsif product.tags contains 'coleccion-arabes'
+    assign coleccion = 'Árabes'
+  endif
+  assign variante = product.selected_or_first_available_variant
+-%}
+Hola, Maison Carvajal. Quiero pedir este perfume:
+
+*Referencia:* {{ product.vendor }} {{ product.title }}
+{% unless product.has_only_default_variant %}*Presentación:* {{ variante.title }}
+{% endunless %}{% if coleccion != blank %}*Colección:* {{ coleccion }}
+{% endif %}{% if product.price > 0 %}*Precio en la web:* {{ product.price | money_without_trailing_zeros }}
+{% endif %}*Enlace:* {{ shop.url }}{{ product.url }}
+
+¿Me confirmas disponibilidad, precio final y tiempo de entrega? Mi ciudad de entrega es:

@@ -1,0 +1,87 @@
+{%- doc -%}
+  MAISON CARVAJAL - tarjeta compacta de perfume para las secciones de la home
+  (tendencias y test). Muestra foto, casa, nombre, precio y un botón:
+  El botón depende del modo de venta (snippets/mc-modo-venta.liquid):
+  - directa: "Agregar al carrito" (una presentación) o "Elegir presentación" (varias).
+  - pedido: "Pedir por WhatsApp" con el mensaje estructurado (snippets/mc-pedido-msg.liquid).
+  - consultar: "Consultar por WhatsApp" (sin precio).
+  El formulario funciona sin JavaScript (lleva al carrito); con JavaScript se agrega sin salir
+  de la página (ver el script de sections/mc-tendencias.liquid).
+
+  @param {product} product - Producto a mostrar
+  @param {string} [sizes] - Atributo sizes de la imagen
+{%- enddoc -%}
+{%- if product != blank -%}
+  {%- liquid
+    assign img_sizes = sizes | default: '(min-width: 990px) 22vw, (min-width: 750px) 30vw, 62vw'
+    assign img_alt = product.featured_image.alt | default: product.title
+    assign img_alt = product.vendor | append: ' ' | append: img_alt
+    assign full_name = product.vendor | append: ' ' | append: product.title
+  -%}
+  <div class="mc-tcard">
+    <a class="mc-tcard__link" href="{{ product.url }}">
+      <span class="mc-tcard__media">
+        {%- if product.featured_image -%}
+          {{
+            product.featured_image
+            | image_url: width: 600
+            | image_tag: loading: 'lazy', widths: '240, 360, 480, 600', sizes: img_sizes, alt: img_alt
+          }}
+        {%- endif -%}
+      </span>
+      <span class="mc-tcard__body">
+        <span class="mc-card-vendor">{{ product.vendor }}</span>
+        <span class="mc-card-name">{{ product.title }}</span>
+        <span class="mc-tcard__price">
+          {%- if product.price > 0 -%}
+            {{ product.price | money_without_trailing_zeros }}
+          {%- else -%}
+            Consultar precio
+          {%- endif -%}
+        </span>
+      </span>
+    </a>
+    {%- capture modo -%}{% render 'mc-modo-venta', product: product %}{%- endcapture -%}
+    {%- assign modo = modo | strip -%}
+    {%- if modo == 'pedido' -%}
+      {%- capture wa_msg -%}{% render 'mc-pedido-msg', product: product %}{%- endcapture -%}
+      <a
+        class="mc-tcard__add mc-tcard__add--ask"
+        href="https://wa.me/57XXXXXXXXXX?text={{ wa_msg | strip | url_encode }}"
+        target="_blank"
+        rel="noopener"
+        aria-label="Pedir {{ full_name | escape }} por WhatsApp (se abre en una pestaña nueva)"
+      >
+        Pedir por WhatsApp
+      </a>
+    {%- elsif modo == 'directa' -%}
+      {%- if product.has_only_default_variant -%}
+        <form class="mc-tcard__form" method="post" action="{{ routes.cart_add_url }}" data-mc-add>
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="mc-tcard__add" aria-label="Agregar {{ full_name | escape }} al carrito">
+            <span data-label>Agregar al carrito</span>
+          </button>
+          <span class="visually-hidden" role="status" data-status></span>
+        </form>
+      {%- else -%}
+        <a class="mc-tcard__add" href="{{ product.url }}" aria-label="Elegir presentación de {{ full_name | escape }}">
+          Elegir presentación
+        </a>
+      {%- endif -%}
+    {%- else -%}
+      {%- capture wa_msg -%}
+        Hola, me interesa {{ full_name }}. ¿Me confirmas precio y disponibilidad? {{ shop.url }}{{ product.url }}
+      {%- endcapture -%}
+      <a
+        class="mc-tcard__add mc-tcard__add--ask"
+        href="https://wa.me/57XXXXXXXXXX?text={{ wa_msg | strip | url_encode }}"
+        target="_blank"
+        rel="noopener"
+        aria-label="Consultar {{ full_name | escape }} por WhatsApp (se abre en una pestaña nueva)"
+      >
+        Consultar por WhatsApp
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}

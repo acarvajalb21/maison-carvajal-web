@@ -1,0 +1,86 @@
+{%- comment -%}
+  MAISON CARVAJAL - estilos de marca.
+  Se cargan desde la sección 'mc_styles' de sections/footer-group.json.
+  Paleta del catálogo: negro #151515, blanco #FFFFFF, champán #C6A66B (solo líneas y fondos oscuros),
+  marfil #F4F0E8, gris #66615A (texto secundario).
+{%- endcomment -%}
+<style>
+  :root { --mc-black: #151515; --mc-white: #ffffff; --mc-champagne: #c6a66b; --mc-ivory: #f4f0e8; --mc-gray: #66615a; --mc-line: #e5ded0; }
+  .mc-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 48px; padding: 0.85rem 1.6rem; font-family: var(--font-body--family); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; border: 1px solid transparent; border-radius: 0; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+  .mc-btn:focus-visible { outline: 2px solid var(--mc-champagne); outline-offset: 3px; }
+  .mc-btn--dark { background: var(--mc-black); color: var(--mc-white); border-color: var(--mc-black); }
+  .mc-btn--dark:hover { background: #2a2a2a; }
+  .mc-btn--light { background: var(--mc-white); color: var(--mc-black); border-color: var(--mc-white); }
+  .mc-btn--light:hover { background: var(--mc-ivory); }
+  .mc-btn--ghost { background: transparent; color: var(--mc-white); border-color: rgba(255, 255, 255, 0.6); }
+  .mc-btn--ghost:hover { border-color: var(--mc-champagne); color: var(--mc-champagne); }
+  .mc-btn--outline { background: transparent; color: var(--mc-black); border-color: var(--mc-black); width: 100%; }
+  .mc-btn--outline:hover { background: var(--mc-black); color: var(--mc-white); }
+  .mc-btn--block { width: 100%; }
+  .mc-eyebrow { margin: 0; font-family: var(--font-body--family); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mc-gray); }
+  .mc-rule { display: block; width: 64px; height: 1px; background: var(--mc-champagne); border: 0; }
+  .mc-hero { background: var(--mc-black); color: var(--mc-white); text-align: center; padding: clamp(4rem, 12vw, 8rem) 1.25rem; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+  .mc-hero .mc-eyebrow { color: var(--mc-champagne); }
+  .mc-hero__title { margin: 0; font-family: var(--font-heading--family); font-weight: 400; font-size: clamp(2.25rem, 8vw, 4.5rem); letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.05; color: var(--mc-white); }
+  .mc-hero__tagline { margin: 0; font-family: var(--font-heading--family); font-style: italic; font-size: clamp(1.1rem, 3.5vw, 1.5rem); color: var(--mc-white); }
+  .mc-hero__sub { margin: 0; max-width: 36rem; font-size: 1rem; line-height: 1.6; color: rgba(255, 255, 255, 0.82); }
+  .mc-hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 0.5rem; }
+  .mc-hero__collections { margin: 0.75rem 0 0; font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
+  .mc-section-head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; margin-bottom: 2rem; }
+  .mc-section-head h2 { margin: 0; font-family: var(--font-heading--family); font-weight: 400; font-size: clamp(1.75rem, 5vw, 2.5rem); }
+  .mc-section-head p { margin: 0; max-width: 38rem; color: var(--mc-gray); line-height: 1.6; }
+  .mc-collections { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .mc-collections { grid-template-columns: repeat(3, 1fr); } }
+  .mc-collection-tile { position: relative; display: flex; flex-direction: column; justify-content: flex-end; aspect-ratio: 4 / 5; min-height: 260px; padding: 1.5rem; background: var(--mc-black); color: var(--mc-white); text-decoration: none; overflow: hidden; border-radius: 8px; }
+  .mc-collection-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--mc-white); padding: 1.5rem 1.5rem 5.5rem; transition: transform 0.4s ease; }
+  .mc-collection-tile:hover img { transform: scale(1.03); }
+  .mc-collection-tile__label { position: relative; z-index: 1; display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-top: 1px solid var(--mc-champagne); padding-top: 0.85rem; }
+  .mc-collection-tile--photo .mc-collection-tile__label { background: var(--mc-black); margin: 0 -1.5rem -1.5rem; padding: 1rem 1.5rem; }
+  .mc-collection-tile__name { font-family: var(--font-heading--family); font-size: 1.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .mc-collection-tile__cta { font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mc-champagne); }
+  .mc-collection-tile:focus-visible { outline: 2px solid var(--mc-champagne); outline-offset: 3px; }
+  .mc-houses { display: grid; gap: 2rem; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .mc-houses { grid-template-columns: repeat(3, 1fr); } }
+  .mc-houses h3 { margin: 0 0 0.75rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--mc-champagne); font-family: var(--font-heading--family); font-weight: 400; font-size: 1.25rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .mc-houses ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .mc-houses a { display: inline-block; padding: 0.5rem 0.85rem; border: 1px solid var(--mc-line); border-radius: 999px; font-size: 0.875rem; color: var(--mc-black); text-decoration: none; background: var(--mc-white); }
+  .mc-houses a:hover, .mc-houses a:focus-visible { border-color: var(--mc-black); }
+  .mc-advice { display: grid; gap: 2rem; align-items: center; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .mc-advice { grid-template-columns: 1fr 1fr; } }
+  .mc-advice h2 { margin: 0 0 1rem; font-family: var(--font-heading--family); font-weight: 400; font-size: clamp(1.75rem, 5vw, 2.5rem); }
+  .mc-advice p { margin: 0 0 1.5rem; color: var(--mc-gray); line-height: 1.7; }
+  .mc-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; counter-reset: mc-step; }
+  .mc-steps li { counter-increment: mc-step; display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.75rem; align-items: start; background: var(--mc-ivory); padding: 1rem 1.25rem; border-radius: 8px; }
+  .mc-steps li::before { content: counter(mc-step, decimal-leading-zero); font-family: var(--font-heading--family); font-size: 1.25rem; color: var(--mc-black); border-bottom: 1px solid var(--mc-champagne); }
+  .mc-steps strong { display: block; margin-bottom: 0.2rem; }
+  .mc-steps span { color: var(--mc-gray); font-size: 0.9375rem; }
+  .mc-card-vendor { margin: 0 0 0.15rem; font-family: var(--font-body--family); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mc-gray); }
+  .mc-card-name { margin: 0; font-family: var(--font-heading--family); font-size: 1.0625rem; }
+  .mc-consultar { font-family: var(--font-body--family); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.04em; color: var(--mc-black); }
+  product-card:has(.mc-consultar) .product-badges { display: none; }
+  .mc-vendor-link { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mc-gray); text-decoration: none; border-bottom: 1px solid var(--mc-champagne); padding-bottom: 0.2rem; }
+  .mc-vendor-link:hover, .mc-vendor-link:focus-visible { color: var(--mc-black); }
+  .mc-extra { display: flex; flex-direction: column; gap: 1rem; }
+  .mc-specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin: 0; }
+  .mc-specs div { background: var(--mc-ivory); padding: 0.75rem 1rem; border-radius: 6px; }
+  .mc-specs dt { font-size: 0.6875rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mc-gray); }
+  .mc-specs dd { margin: 0.2rem 0 0; font-weight: 600; }
+  .mc-notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; font-size: 0.875rem; color: var(--mc-gray); }
+  .mc-notes li::before { content: "\2014"; color: var(--mc-champagne); margin-right: 0.5rem; }
+  .mc-consult-box { display: flex; flex-direction: column; gap: 0.75rem; }
+  .mc-consult-box p { margin: 0; color: var(--mc-gray); }
+  .mc-pedido { display: flex; flex-direction: column; gap: 0.75rem; padding: 1.25rem; background: var(--mc-ivory); border-left: 2px solid var(--mc-champagne); }
+  .mc-pedido p { margin: 0; }
+  .mc-pedido__title { font-family: var(--font-heading--family); font-size: 1.25rem; color: var(--mc-black); }
+  .mc-pedido__text { color: var(--mc-gray); line-height: 1.6; }
+  /* Tarjetas: todas las fotos del mismo tamaño (cuadradas), sin recortar el frasco */
+  product-card img, .product-card img { object-fit: contain !important; background: var(--mc-white); }
+  product-card .card-gallery, .product-card .card-gallery { background: var(--mc-white); }
+  @media (prefers-reduced-motion: reduce) { .mc-btn, .mc-collection-tile img { transition: none; } .mc-collection-tile:hover img { transform: none; } }
+  /* Cabecera: junto al monograma MC, el nombre en la serif del catálogo (solo desde tableta; en celular va el monograma solo). */
+  @media (min-width: 750px) {
+    .header-logo:has(.header-logo__image)::after { content: 'MAISON CARVAJAL'; margin-left: 0.75rem; font-family: Georgia, 'Times New Roman', serif; font-size: 1rem; font-weight: 400; letter-spacing: 0.2em; white-space: nowrap; color: var(--mc-black); }
+  }
+</style>
+{% render 'mc-whatsapp-flotante' %}
+{% render 'mc-2x300-auto' %}
